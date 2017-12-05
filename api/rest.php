@@ -36,6 +36,17 @@
       return $ctrl->getCatalogueId($args,$resp);
     }
   )->setName("categoriesID");
+  
+  
+  
+  $app->put('/categories/{id}',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Catalogue($this);
+  			return $ctrl->updateCategorieId($req,$resp,$args);
+  		}
+  		)->setName("categoriesUpdateID");
+  		
+  		
   $app->post('/categories[/]',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
