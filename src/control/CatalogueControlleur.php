@@ -19,13 +19,13 @@
       $resp->getBody()->write($listeCategorie);
       return $resp;
     }
+
     public function getCatalogueId($args,$resp){
       $id=$args['name'];
       $resp=$resp->withHeader('Content-Type','application/json');
       $categorie = json_encode(categorie::find($id));
       $resp->getBody()->write($categorie);
       return $resp;
-
     }
 
     public function createCategorie(Request $req, Response $rs, array $args){
@@ -40,10 +40,19 @@
       $rs->getBody()->write('created');
       return $rs;
     }
+
     public function getSandwichs($resp){
       $resp=$resp->withHeader('Content-Type','application/json');
       $listeSandwichs = json_encode(sandwich::get());
       $resp->getBody()->write($listeSandwichs);
+      return $resp;
+    }
+
+    public function getSandwichsId($args,$resp){
+      $id=$args['name'];
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $categorie = json_encode(sandwich::find($id));
+      $resp->getBody()->write($categorie);
       return $resp;
     }
   }
