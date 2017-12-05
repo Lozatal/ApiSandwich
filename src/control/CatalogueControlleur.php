@@ -41,13 +41,22 @@
       return $rs;
     }
 
-    public function getSandwichs($resp){
+    public function getSandwichs($req,$resp,$args){
+
+      $q = sandwich::select('id','nom','type_pain');
+
+      if(!is_null($req->getQueryParam('type'))){
+        $q=$q->where('type_pain','LIKE','%'.$req->getQueryParam('type').'%');
+      }
+      if(!is_null($req->getQueryParam('img'))){
+        $q=$q->where('img','LIKE','%'.$req->getQueryParam('img').'%');
+      }
+
+      $listeSandwichs = $q->get();
       $resp=$resp->withHeader('Content-Type','application/json');
-      $listeSandwichs = sandwich::select('id','nom','type_pain')->get();
       for($i=0;$i<sizeof($listeSandwichs);$i++){
         $sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
-        
-        $href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);;
+        $href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
         $tab["self"]=$href;
         $sandwichs[$i]["links"]=$tab;
       }
