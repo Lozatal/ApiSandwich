@@ -43,14 +43,21 @@
 
     public function getSandwichs($req,$resp,$args){
 
+      $type = $req->getQueryParam('type',null);
+      $img = $req->getQueryParam('img',null);
+      $size = $req->getQueryParam('size',10);
+      $page = $req->getQueryParam('page',1);
+
       $q = sandwich::select('id','nom','type_pain');
 
-      if(!is_null($req->getQueryParam('type'))){
+      if(!is_null($type)){
         $q=$q->where('type_pain','LIKE','%'.$req->getQueryParam('type').'%');
       }
-      if(!is_null($req->getQueryParam('img'))){
+      if(!is_null($img)){
         $q=$q->where('img','LIKE','%'.$req->getQueryParam('img').'%');
       }
+      
+      //$q=$q->skip(($page-1)*$size);
 
       $listeSandwichs = $q->get();
       $resp=$resp->withHeader('Content-Type','application/json');
