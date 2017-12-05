@@ -56,7 +56,7 @@
   $app->get('/sandwichs[/]',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
-      return $ctrl->getSandwichs($resp);
+      return $ctrl->getSandwichs($req,$resp,$args);
     }
   );
   $app->get('/sandwichs/{id}',
