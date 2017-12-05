@@ -54,5 +54,10 @@
       return $ctrl->getSandwichsId($args,$resp);
     }
   );
+  $app->put('/sandwichs/{name}', function(Request $req, Response $resp, $args){
+    $ctrl=new Catalogue($this);
+      return $ctrl->getSandwichs($args,$resp);
+    });
+
   $app->run();
 ?>

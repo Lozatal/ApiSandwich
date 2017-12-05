@@ -43,13 +43,19 @@
 
     public function getSandwichs($resp){
       $resp=$resp->withHeader('Content-Type','application/json');
+      
+      $query = sandwich::select('id');
+      //filtre
+      $liste = $query->get();
+
       $listeSandwichs = json_encode(sandwich::get());
       $resp->getBody()->write($listeSandwichs);
+      $this->conteneur->get('router')->pathFor('Michel', ['id'=>$sandwich->id]);
       return $resp;
     }
 
     public function getSandwichsId($args,$resp){
-      $id=$args['name'];
+      $id=$args['id'];
       $resp=$resp->withHeader('Content-Type','application/json');
       $categorie = json_encode(sandwich::find($id));
       $resp->getBody()->write($categorie);
