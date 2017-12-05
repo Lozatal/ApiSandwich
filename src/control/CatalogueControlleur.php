@@ -43,8 +43,14 @@
 
     public function getSandwichs($resp){
       $resp=$resp->withHeader('Content-Type','application/json');
-      $listeSandwichs = json_encode(sandwich::get());
-      $resp->getBody()->write($listeSandwichs);
+      $listeSandwichs = sandwich::select('id','nom','type_pain')->get();
+      for($i=0;$i<sizeof($listeSandwichs);$i++){
+        $sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
+        $href["href"]=$i;
+        $tab["self"]=$href;
+        $sandwichs[$i]["links"]=$tab;
+      }
+      $resp->getBody()->write(json_encode($sandwichs));
       return $resp;
     }
 
