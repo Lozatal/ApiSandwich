@@ -13,13 +13,18 @@
       $this->conteneur=$conteneur;
     }
 
-    public function getCatalogue(){
-      $Listecategorie = json_encode(categorie::get());
-      return $Listecategorie;
+    public function getCatalogue($resp){
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $listeCategorie = json_encode(categorie::get());
+      $resp->getBody()->write($listeCategorie);
+      return $resp;
     }
-    public function getCatalogueId($id){
+    public function getCatalogueId($args,$resp){
+      $id=$args['name'];
+      $resp=$resp->withHeader('Content-Type','application/json');
       $categorie = json_encode(categorie::find($id));
-      return $categorie;
+      $resp->getBody()->write($categorie);
+      return $resp;
 
     }
 
@@ -34,5 +39,11 @@
             ->withHeader('Location', '/categories/nouvelle');
       $rs->getBody()->write('created');
       return $rs;
+    }
+    public function getSandwichs($resp){
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $listeSandwichs = json_encode(sandwich::get());
+      $resp->getBody()->write($listeSandwichs);
+      return $resp;
     }
   }

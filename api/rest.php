@@ -26,25 +26,26 @@
   //Application
   $app->get('/categories[/]',
     function(Request $req, Response $resp, $args){
-      $resp=$resp->withHeader('Content-Type','application/json');
       $ctrl=new Catalogue($this);
-      $resp->getBody()->write($ctrl->getCatalogue());
-      return $resp;
+      return $ctrl->getCatalogue($resp);
     }
   )->setName("categories");
   $app->get('/categories/{name}',
     function(Request $req, Response $resp, $args){
-      $name=$args['name'];
-      $resp=$resp->withHeader('Content-Type','application/json');
       $ctrl=new Catalogue($this);
-      $resp->getBody()->write($ctrl->getCatalogueId($name));
-      return $resp;
+      return $ctrl->getCatalogueId($args,$resp);
     }
   )->setName("categoriesID");
   $app->post('/categories[/]',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
       return $ctrl->createCategorie($req,$resp,$args);
+    }
+  );
+  $app->get('/sandwichs[/]',
+    function(Request $req, Response $resp, $args){
+      $ctrl=new Catalogue($this);
+      return $ctrl->getSandwichs($resp);
     }
   );
   $app->run();
