@@ -21,7 +21,7 @@ services:
     image: canals/php
     container_name: apiSandwich.lbs.local
     environment:
-      - VHOST_HOSTNAME=api.lbs.local
+      - VHOST_HOSTNAME=apiSandwich.lbs.local
       - VHOST_DOCROOT=/var/www/api
 #     - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
 #     - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
