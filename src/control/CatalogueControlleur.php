@@ -40,19 +40,19 @@
       $rs->getBody()->write('created');
       return $rs;
     }
-    
+
     public function updateCategorieId(Request $req, Response $rs, array $args){
     	$id=$args['id'];
-    	
+
     	$postVar=$req->getParsedBody();
-    	
+
     	$categorie = categorie::find($id);
     	if($categorie){
     		if (!is_null($postVar['nom']) && !is_null($postVar['description'])){
 		    	$categorie->nom = filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
 		    	$categorie->description= filter_var($postVar['description'],FILTER_SANITIZE_STRING);
 		    	$categorie->save();
-		    	
+
 		    	$rs=$rs->withHeader('Content-Type','application/json')
 		    	->withStatus(200)
 		    	->withHeader('Location', '/categories/update');
@@ -76,6 +76,8 @@
       $img = $req->getQueryParam('img',null);
       $size = $req->getQueryParam('size',10);
       $page = $req->getQueryParam('page',1);
+      $skip = $size*($page-1);
+
 
       $q = sandwich::select('id','nom','type_pain');
 
@@ -85,8 +87,8 @@
       if(!is_null($img)){
         $q=$q->where('img','LIKE','%'.$req->getQueryParam('img').'%');
       }
-      
-      //$q=$q->skip(($page-1)*$size);
+
+      $q=$q->skip($skip)->take($size);
 
       $listeSandwichs = $q->get();
       $resp=$resp->withHeader('Content-Type','application/json');
