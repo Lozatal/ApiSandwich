@@ -13,14 +13,24 @@
       $this->conteneur=$conteneur;
     }
 
-    public function getCatalogue($resp){
+    /*
+    * Retourne l'intégralité des catégories de sandwichs
+    * @param : Response $resp
+    * Return Response $resp contenant la page complète
+    */
+    public function getCatalogue(Response $resp){
       $resp=$resp->withHeader('Content-Type','application/json');
       $listeCategorie = json_encode(categorie::get());
       $resp->getBody()->write($listeCategorie);
       return $resp;
     }
 
-    public function getCatalogueId($args,$resp){
+    /*
+    * Retourne les catégories classés par id
+    * @param : array $args[], Response $resp
+    * Return Response $resp contenant la page complète
+    */
+    public function getCatalogueId(array $args, Response $resp){
       $id=$args['name'];
       $resp=$resp->withHeader('Content-Type','application/json');
       $categorie = json_encode(categorie::find($id));
@@ -28,19 +38,29 @@
       return $resp;
     }
 
-    public function createCategorie(Request $req, Response $rs, array $args){
+    /*
+    * Créée via une requête POST une nouvelle catégorie
+    * @param : Request $req, Response $resp, array $args[]
+    * Return Response $resp contenant la page complète
+    */
+    public function createCategorie(Request $req, Response $resp, array $args){
       $postVar=$req->getParsedBody();
       $categorie = new categorie();
       $categorie->nom=filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
       $categorie->description=filter_var($postVar['description'],FILTER_SANITIZE_STRING);
       $categorie->save();
-      $rs=$rs->withHeader('Content-Type','application/json')
+      $resp=$resp->withHeader('Content-Type','application/json')
             ->withStatus(201)
             ->withHeader('Location', '/categories/nouvelle');
-      $rs->getBody()->write('created');
-      return $rs;
+      $resp->getBody()->write('created');
+      return $resp;
     }
 
+    /*
+    * Met à jour une catégorie via une requête PUT
+    * @param : Request $req, Response $resp, array $args[]
+    * Return Response $resp contenant la page complète
+    */
     public function updateCategorieId(Request $req, Response $rs, array $args){
     	$id=$args['id'];
 
@@ -70,7 +90,12 @@
     	return $rs;
     }
 
-    public function getSandwichs($req,$resp,$args){
+    /*
+    * Retourne la liste des Sandwichs, avec filtre et pagination
+    * @param : Request $req, Response $resp, array $args[]
+    * Return Response $resp contenant la page complète
+    */
+    public function getSandwichs(Request $req,Response $resp,array $args){
 
       $type = $req->getQueryParam('type',null);
       $img = $req->getQueryParam('img',null);
@@ -87,11 +112,18 @@
       if(!is_null($img)){
         $q=$q->where('img','LIKE','%'.$req->getQueryParam('img').'%');
       }
+      //Récupération du total d'élement de la recherche
+      $requeteComplete = $q->get();
+      $total = sizeof($requeteComplete);
 
+      //Pagination et récupération de la requête
       $q=$q->skip($skip)->take($size);
-
       $listeSandwichs = $q->get();
+
+      //Construction de la réponse
       $resp=$resp->withHeader('Content-Type','application/json');
+      $resp=$resp->withHeader('Count',$total);
+      $resp=$resp->withHeader('Size',$size);
       for($i=0;$i<sizeof($listeSandwichs);$i++){
         $sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
         $href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
@@ -102,7 +134,12 @@
       return $resp;
     }
 
-    public function getSandwichsId($args,$resp){
+    /*
+    * Retourne un sandwichs via son id
+    * @param : array $args[], Response $resp
+    * Return Response $resp contenant la page complète
+    */
+    public function getSandwichsId(array $args, Response $resp){
       $id=$args['id'];
       $resp=$resp->withHeader('Content-Type','application/json');
       $categorie = json_encode(sandwich::find($id));
