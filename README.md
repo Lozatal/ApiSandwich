@@ -4,14 +4,17 @@
 
 ### Catégories
 
-Accéder à une catégorie: (via un get)
+Accéder à la liste des catégories: (via un get)
 >categories
+
+Accéder à une catégorie: (via un get)
+>categories/{id}
 
 Créer une catégorie: (via un post)
 >categories
 
 Modifier une catégorie: (via un put)
->categories
+>categories/{id}
 
 ### Sandwichs
 
