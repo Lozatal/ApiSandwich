@@ -21,5 +21,8 @@ Modifier une catégorie: (via un put)
 Accéder à la liste des sandwichs: (via un get)
 >sandwichs
 
+Accéder à un sandwich: (via un get)
+>sandwichs/{id}
+
 Paramètres possibles:
 >sandwichs?type=&img=&page=&size=
