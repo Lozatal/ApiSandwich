@@ -36,29 +36,31 @@
       return $ctrl->getCatalogueId($args,$resp);
     }
   )->setName("categoriesID");
-  
-  
-  
+
+
+
   $app->put('/categories/{id}',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Catalogue($this);
   			return $ctrl->updateCategorieId($req,$resp,$args);
   		}
-  		)->setName("categoriesUpdateID");
-  		
-  		
+  )->setName("categoriesUpdateID");
+
+
   $app->post('/categories[/]',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
       return $ctrl->createCategorie($req,$resp,$args);
     }
-  );
+  )->setName('createCategorie');
+
   $app->get('/sandwichs[/]',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
       return $ctrl->getSandwichs($req,$resp,$args);
     }
-  );
+  )->setName('sandwichsListe');
+
   $app->get('/sandwichs/{id}',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
