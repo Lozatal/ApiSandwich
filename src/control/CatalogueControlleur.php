@@ -103,7 +103,6 @@
       $page = $req->getQueryParam('page',1);
       $skip = $size*($page-1);
 
-
       $q = sandwich::select('id','nom','type_pain');
 
       if(!is_null($type)){
@@ -112,11 +111,22 @@
       if(!is_null($img)){
         $q=$q->where('img','LIKE','%'.$req->getQueryParam('img').'%');
       }
+
       //Récupération du total d'élement de la recherche
       $requeteComplete = $q->get();
       $total = sizeof($requeteComplete);
 
+      //Correction de la Pagination
+      $totalItem = $size + $skip;
+      if($totalItem>$total){
+        $page=floor(($total/$size));
+      }
+      if($page<=0){
+          $page=1;
+      }
+
       //Pagination et récupération de la requête
+      $skip = $size*($page-1);
       $q=$q->skip($skip)->take($size);
       $listeSandwichs = $q->get();
 
@@ -124,6 +134,7 @@
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp=$resp->withHeader('Count',$total);
       $resp=$resp->withHeader('Size',$size);
+      $resp=$resp->withHeader('Page',$page);
       for($i=0;$i<sizeof($listeSandwichs);$i++){
         $sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
         $href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
