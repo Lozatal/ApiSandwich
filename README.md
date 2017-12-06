@@ -1,8 +1,8 @@
 # API - Le Bon Sandwich
 
-##Routes
+## Routes
 
-###Catégories
+### Catégories
 
 Accéder à une catégorie: (via un get)
 >categories
@@ -13,7 +13,7 @@ Créer une catégorie: (via un post)
 Modifier une catégorie: (via un put)
 >categories
 
-###Sandwichs
+### Sandwichs
 
 Accéder à la liste des sandwichs: (via un get)
 >sandwichs
