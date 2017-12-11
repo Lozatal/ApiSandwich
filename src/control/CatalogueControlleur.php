@@ -119,7 +119,11 @@
       //Correction de la Pagination
       $totalItem = $size + $skip;
       if($totalItem>$total){
-        $page=floor(($total/$size));
+        if(is_float($total/$size)){ //Il reste une petite page
+          $page=floor(($total/$size))+1;
+        }else{
+          $page=floor(($total/$size));
+        }
       }
       if($page<=0){
           $page=1;
