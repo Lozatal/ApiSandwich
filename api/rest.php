@@ -67,6 +67,13 @@
       return $ctrl->getSandwichsId($args,$resp);
     }
   )->setName('sandwichsLink');
+  
+  $app->get('/categories/{id}/sandwichs',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Catalogue($this);
+  			return $ctrl->getSandwichsId($args,$resp);
+  		}
+  		)->setName('sandwichsLink');
 
 
   $app->run();
