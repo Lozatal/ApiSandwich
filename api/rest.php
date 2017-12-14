@@ -4,7 +4,7 @@
   use \Psr\Http\Message\ResponseInterface as Response;
   use \lbs\control\CatalogueControlleur as Catalogue;
 
-  $config=parse_ini_file("../src/conf/lbs.db.conf.ini");
+  $config=parse_ini_file("../src/config/lbs.db.conf.ini");
   $db = new Illuminate\Database\Capsule\Manager();
   $db->addConnection($config);
   $db->setAsGlobal();
@@ -17,7 +17,7 @@
     ]
   ];
 
-  $errors = require_once __DIR__ . '/../src/conf/api_errors.php';
+  $errors = require_once __DIR__ . '/../src/config/api_errors.php';
 
   $c=new \Slim\Container(array_merge( $configuration, $errors) );
   $app=new \Slim\App($c);
