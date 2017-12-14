@@ -101,6 +101,13 @@
       return $ctrl->getCategoriesBySandwich($req,$resp,$args);
     }
   )->setName('sandwichsCategories');
+  
+  $app->post('/commandes[/]',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Catalogue($this);
+  			return $ctrl->createCommande($req,$resp,$args);
+  		}
+  		)->setName('createCommande');
 
   $app->run();
 ?>
