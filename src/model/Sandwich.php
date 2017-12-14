@@ -27,4 +27,11 @@ class Sandwich extends \Illuminate\Database\Eloquent\Model {
   public function images(){
     return $this->hasMany( 'lbs\model\Image', 's_id');
   }
+  
+  public function commandes(){
+  	return $this->belongsToMany( 'lbs\model\Commande',
+					  			'comm2sand',
+					  			'sand_id',
+					  			'comm_id');
+  }
 }
