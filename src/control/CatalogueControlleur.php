@@ -36,7 +36,7 @@
         $tabCategorie[$i]["links"]=$tab;
         $i++;
       }
-      
+
       $resp=$resp->withHeader('Content-Type','application/json');
       $tabRendu["type"]="collection";
       $tabRendu["meta"]["count"]=$total;
@@ -222,7 +222,6 @@
       $sandwich=sandwich::find($id);
       $categories=$sandwich->categories;
       foreach($categories as $categorie){
-        unset($categorie['pivot']);
         $tabCategorie[]=$categorie;
         $href["href"]=$this->conteneur->get('router')->pathFor('categoriesID', ['name'=>$categorie['id']]);
         $tab["self"]=$href;
