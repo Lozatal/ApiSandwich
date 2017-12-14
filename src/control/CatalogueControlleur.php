@@ -21,13 +21,11 @@
     */
     public function getCatalogue(Response $resp){
       $categories=categorie::get();
-      $i=0;
       foreach($categories as $categorie){
-        $tabCategorie[$i]=$categorie;
+        $tabCategorie[]=$categorie;
         $href["href"]=$this->conteneur->get('router')->pathFor('categoriesID', ['name'=>$categorie['id']]);
         $tab["self"]=$href;
-        $tabCategorie[$i]["links"]=$tab;
-        $i++;
+        $tabCategorie[]["links"]=$tab;
       }
       $resp=$resp->withHeader('Content-Type','application/json');
       $categorie = json_encode($tabCategorie);
@@ -123,7 +121,6 @@
       $img = $req->getQueryParam('img',null);
       $size = $req->getQueryParam('size',10);
       $page = $req->getQueryParam('page',1);
-      $skip = $size*($page-1);
 
       $q = sandwich::select('id','nom','type_pain');
 
@@ -138,22 +135,7 @@
       $requeteComplete = $q->get();
       $total = sizeof($requeteComplete);
 
-      //Correction de la Pagination
-      $totalItem = $size + $skip;
-      if($totalItem>$total){
-        if(is_float($total/$size)){ //Il reste une petite page
-          $page=floor(($total/$size))+1;
-        }else{
-          $page=floor(($total/$size));
-        }
-      }
-      if($page<=0){
-          $page=1;
-      }
-
-      //Pagination et récupération de la requête
-      $skip = $size*($page-1);
-      $q=$q->skip($skip)->take($size);
+      $q=$this->pagination($q,$size,$page,$total);
       $listeSandwichs = $q->get();
 
       //Construction de la réponse
@@ -208,6 +190,48 @@
     }   
 
     /*
+     * Retourne les sandwitchs d'une categorie
+     * @param : array $args[], Response $resp
+     * Return Response $resp contenant la page complète
+     */
+    public function getSandwichsByCategorie(array $args, Response $resp){
+    	$idCateg=$args['id'];
+    	$resp=$resp->withHeader('Content-Type','application/json');
+    	$categorie = categorie::findOrFail($idCateg);
+    	$listeSandwichs = $categorie->sandwichs()
+    					->select('id','nom','type_pain')
+    					->get();
+
+    	for($i=0;$i<sizeof($listeSandwichs);$i++){
+    		$sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
+    		$href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
+    		$tab["self"]=$href;
+    		$sandwichs[$i]["links"]=$tab;
+    	}
+
+    	//$listeSandwichs = addSandwichLink($listeSandwichs);
+
+    	$resp->getBody()->write(json_encode($sandwichs));
+    	return $resp;
+    }
+
+    /*
+     * Ajoute les links aux objets
+     * @param : $listeSandwich : collection d'objet
+     * Return Response $resp contenant la page complète
+     */
+    protected function addSandwichLink($listeSandwich){
+    	for($i=0;$i<sizeof($listeSandwichs);$i++){
+    		$sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
+    		$href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
+    		$tab["self"]=$href;
+    		$sandwichs[$i]["links"]=$tab;
+    	}
+
+    	return $sandwichs;
+    }
+
+    /*
     * Retourne la liste des catégories du sandwichs
     * @param : Request $req, Response $resp, array $args[]
     * Return$sandwichCategories
@@ -216,14 +240,12 @@
       $id=$args['id'];
       $sandwich=sandwich::find($id);
       $categories=$sandwich->categories;
-      $i=0;
       foreach($categories as $categorie){
         unset($categorie['pivot']);
-        $tabCategorie[$i]=$categorie;
+        $tabCategorie[]=$categorie;
         $href["href"]=$this->conteneur->get('router')->pathFor('categoriesID', ['name'=>$categorie['id']]);
         $tab["self"]=$href;
-        $tabCategorie[$i]["links"]=$tab;
-        $i++;
+        $tabCategorie[]=["links"=>$tab];
       }
       $resp=$resp->withHeader('Content-Type','application/json');
       $listeCategorie = json_encode($tabCategorie);
@@ -231,4 +253,25 @@
       return $resp;
     }
 
+    /*
+    * Retourne la requête avec pagination
+    * @param : requete, int taille, int page, int tailleTotale
+    */
+    public function pagination($request, $taille, $page, $tailleTotale){
+      $skip = $taille*($page-1);
+      $totalItem = $taille + $skip;
+      if($totalItem>$tailleTotale){
+        if(is_float($tailleTotale/$taille)){
+          $page=floor(($tailleTotale/$taille))+1;
+        }else{
+          $page=floor(($tailleTotale/$taille));
+        }
+      }
+      if($page<=0){
+          $page=1;
+      }
+      $skip = $taille*($page-1);
+      $request=$request->skip($skip)->take($taille);
+      return $request;
+    }
   }
