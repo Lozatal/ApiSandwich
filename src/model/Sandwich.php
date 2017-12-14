@@ -16,14 +16,14 @@ class Sandwich extends \Illuminate\Database\Eloquent\Model {
   }
 
   public function tailles(){
-    return $this->belongsToMany( 'catawich\model\Taille',
+    return $this->belongsToMany( 'lbs\model\Taille',
                                 'tarif',
                                 'sand_id',
-                                'taille_id')
-                ->withPivot("tarif");
+                                'taille_id');
+                //->withPivot('tarif');
   }
 
   public function images(){
-    return $this->hasMany( 'catawich\models\Image', 's_id');
+    return $this->hasMany( 'lbs\model\Image', 's_id');
   }
 }

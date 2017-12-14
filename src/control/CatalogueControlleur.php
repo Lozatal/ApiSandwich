@@ -20,9 +20,18 @@
     * Return Response $resp contenant la page complète
     */
     public function getCatalogue(Response $resp){
+      $categories=categorie::get();
+      $i=0;
+      foreach($categories as $categorie){
+        $tabCategorie[$i]=$categorie;
+        $href["href"]=$this->conteneur->get('router')->pathFor('categoriesID', ['name'=>$categorie['id']]);
+        $tab["self"]=$href;
+        $tabCategorie[$i]["links"]=$tab;
+        $i++;
+      }
       $resp=$resp->withHeader('Content-Type','application/json');
-      $listeCategorie = json_encode(categorie::get());
-      $resp->getBody()->write($listeCategorie);
+      $categorie = json_encode($tabCategorie);
+      $resp->getBody()->write($categorie);
       return $resp;
     }
 
@@ -92,6 +101,18 @@
     }
 
     /*
+    * Retourne la liste des categories
+    *
+    */
+    public function getTailleId(array $args, Response $resp){
+      $id=$args['name'];
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $categorie = json_encode(taille::find($id));
+      $resp->getBody()->write($categorie);
+      return $resp;
+    }
+
+    /*
     * Retourne la liste des Sandwichs, avec filtre et pagination
     * @param : Request $req, Response $resp, array $args[]
     * Return Response $resp contenant la page complète
@@ -150,7 +171,7 @@
       return $resp;
     }
 
-    /*
+    /*$sandwichCategories
     * Retourne un sandwichs via son id
     * @param : array $args[], Response $resp
     * Return Response $resp contenant la page complète
@@ -163,19 +184,51 @@
       return $resp;
     }
 
+    /*
+    * Retourne la liste des tailles de sandwichs disponibles pour 1 sandwichs
+    *
+    */
     public function getTailleBySandwich(Request $req, Response $resp, array $args){
-      $id=$args['taille'];
-      $resp=$resp->withHeader('Content-Type','application/json');
-
-      //$taille = json_encode(sandwich::find($id));
-      $taille = json_encode(sandwich::with('tailles')->where('id','=',$id)->get());
-
-      foreach ($taille->sandwich as $t) 
-      {
-        $resp->getBody()->write($t->pivot->tarif);
+      $id=$args['id'];
+      $sandwich=sandwich::find($id);
+      $tailles=$sandwich->tailles;
+      $i=0;
+      foreach($tailles as $taille){
+        unset($taille['pivot']);
+        $tabTaille[$i]=$taille;
+        $href["href"]=$this->conteneur->get('router')->pathFor('tailleID', ['name'=>$taille['id']]);
+        $tab["self"]=$href;
+        $tabTaille[$i]["links"]=$tab;
+        $i++;
       }
-
-      //$resp->getBody()->write($taille);
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $listeTaille = json_encode($tabTaille);
+      $resp->getBody()->write($listeTaille);
       return $resp;
     }   
+
+    /*
+    * Retourne la liste des catégories du sandwichs
+    * @param : Request $req, Response $resp, array $args[]
+    * Return$sandwichCategories
+    */
+    public function getCategoriesBySandwich(Request $req,Response $resp,array $args){
+      $id=$args['id'];
+      $sandwich=sandwich::find($id);
+      $categories=$sandwich->categories;
+      $i=0;
+      foreach($categories as $categorie){
+        unset($categorie['pivot']);
+        $tabCategorie[$i]=$categorie;
+        $href["href"]=$this->conteneur->get('router')->pathFor('categoriesID', ['name'=>$categorie['id']]);
+        $tab["self"]=$href;
+        $tabCategorie[$i]["links"]=$tab;
+        $i++;
+      }
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $listeCategorie = json_encode($tabCategorie);
+      $resp->getBody()->write($listeCategorie);
+      return $resp;
+    }
+
   }

@@ -30,14 +30,13 @@
       return $ctrl->getCatalogue($resp);
     }
   )->setName("categories");
+
   $app->get('/categories/{name}',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
       return $ctrl->getCatalogueId($args,$resp);
     }
   )->setName("categoriesID");
-
-
 
   $app->put('/categories/{id}',
   		function(Request $req, Response $resp, $args){
@@ -46,13 +45,19 @@
   		}
   )->setName("categoriesUpdateID");
 
-
   $app->post('/categories[/]',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
       return $ctrl->createCategorie($req,$resp,$args);
     }
   )->setName('createCategorie');
+
+  $app->get('/taille/{name}',
+    function(Request $req, Response $resp, $args){
+      $ctrl=new Catalogue($this);
+      return $ctrl->getTailleId($args,$resp);
+    }
+  )->setName("tailleID");
 
   $app->get('/sandwichs[/]',
     function(Request $req, Response $resp, $args){
@@ -68,13 +73,20 @@
     }
   )->setName('sandwichsLink');
 
+
   $app->get('/sandwichs/{id}/taille[/]',
-    function(Request $req, Response $resp, array $args){
+    function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
       return $ctrl->getTailleBySandwich($req, $resp, $args);
     }
   )->setName('sandwichsTaille');
 
+  $app->get('/sandwichs/{id}/categories',
+    function(Request $req, Response $resp, $args){
+      $ctrl=new Catalogue($this);
+      return $ctrl->getCategoriesBySandwich($req,$resp,$args);
+    }
+  )->setName('sandwichsCategories');
 
   $app->run();
 ?>
