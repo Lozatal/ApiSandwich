@@ -6,6 +6,7 @@
   use \Psr\Http\Message\ResponseInterface as Response;
   use lbs\model\Categorie as categorie;
   use lbs\model\Sandwich as sandwich;
+  use illuminate\database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 
   class CatalogueControlleur{
     public $conteneur=null;
@@ -178,33 +179,43 @@
     public function getSandwichsByCategorie(array $args, Response $resp){
     	$idCateg=$args['id'];
     	$resp=$resp->withHeader('Content-Type','application/json');
-    	$categorie = categorie::findOrFail($idCateg);
-    	$listeSandwichs = $categorie->sandwichs()
-    					->select('id','nom','type_pain')
-    					->get();
     	
-    	for($i=0;$i<sizeof($listeSandwichs);$i++){
-    		$sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
-    		$href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
-    		$tab["self"]=$href;
-    		$sandwichs[$i]["links"]=$tab;
-    	}
+    	try{
+    		$categorie = categorie::findOrFail($idCateg);
+	    } catch (ModelNotFoundException $ex) {
+	    	$resp=$resp->withStatus(404);
+	    	$resp->getBody()->write(json_encode('Not found'));
+
+	    	return $resp;
+	    	
+	    	//return Writer::json_error($resp, code:404, message:'ressource non disponible :'. $this->c->get('router')->pathFor('sandwich', ['id'=>$args['id']]));
+	    }
+	    
+	    if($categorie != null){
+	    	
+	    	$listeSandwichs = $categorie->sandwichs()
+	    					->select('id','nom','type_pain')
+	    					->get();
+	    	
+	    	$listeSandwichs = $this->addLink($listeSandwichs, 'sandwich', 'sandwichsLink');
+	    	$resp->getBody()->write(json_encode($listeSandwichs));
+	    }	
     	
-    	//$listeSandwichs = addSandwichLink($listeSandwichs);
-    				
-    	$resp->getBody()->write(json_encode($sandwichs));
     	return $resp;
     }
     
     /*
      * Ajoute les links aux objets
      * @param : $listeSandwich : collection d'objet
-     * Return Response $resp contenant la page complète
+     * @param : $nameObject : nom de l'objet
+     * @param : $pathFor : nom/alias de la route dans le fichier rest.php
+     * Return la liste des sandwichs modifiés
      */
-    protected function addSandwichLink($listeSandwich){
+    protected function addLink($listeSandwichs, $nameObject, $pathFor){
+    	
     	for($i=0;$i<sizeof($listeSandwichs);$i++){
-    		$sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
-    		$href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
+    		$sandwichs[$i][$nameObject]=$listeSandwichs[$i];
+    		$href["href"]=$this->conteneur->get('router')->pathFor($pathFor, ['id'=>$listeSandwichs[$i]['id']]);
     		$tab["self"]=$href;
     		$sandwichs[$i]["links"]=$tab;
     	}
