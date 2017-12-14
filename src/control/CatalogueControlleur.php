@@ -154,6 +154,48 @@
     }
 
     /*
+     * Retourne les sandwitchs d'une categorie
+     * @param : array $args[], Response $resp
+     * Return Response $resp contenant la page complète
+     */
+    public function getSandwichsByCategorie(array $args, Response $resp){
+    	$idCateg=$args['id'];
+    	$resp=$resp->withHeader('Content-Type','application/json');
+    	$categorie = categorie::findOrFail($idCateg);
+    	$listeSandwichs = $categorie->sandwichs()
+    					->select('id','nom','type_pain')
+    					->get();
+
+    	for($i=0;$i<sizeof($listeSandwichs);$i++){
+    		$sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
+    		$href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
+    		$tab["self"]=$href;
+    		$sandwichs[$i]["links"]=$tab;
+    	}
+
+    	//$listeSandwichs = addSandwichLink($listeSandwichs);
+
+    	$resp->getBody()->write(json_encode($sandwichs));
+    	return $resp;
+    }
+
+    /*
+     * Ajoute les links aux objets
+     * @param : $listeSandwich : collection d'objet
+     * Return Response $resp contenant la page complète
+     */
+    protected function addSandwichLink($listeSandwich){
+    	for($i=0;$i<sizeof($listeSandwichs);$i++){
+    		$sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
+    		$href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
+    		$tab["self"]=$href;
+    		$sandwichs[$i]["links"]=$tab;
+    	}
+
+    	return $sandwichs;
+    }
+
+    /*
     * Retourne la liste des catégories du sandwichs
     * @param : Request $req, Response $resp, array $args[]
     * Return$sandwichCategories

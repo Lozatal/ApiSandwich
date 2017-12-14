@@ -7,6 +7,7 @@ class Sandwich extends \Illuminate\Database\Eloquent\Model {
   protected $table = 'sandwich';
   protected $primaryKey = 'id';
   public $timestamps = false;
+  protected $hidden = ['pivot'];
 
   public function categories(){
     return $this->belongsToMany( 'lbs\model\Categorie',
