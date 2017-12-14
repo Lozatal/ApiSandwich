@@ -30,6 +30,7 @@
       return $ctrl->getCatalogue($resp);
     }
   )->setName("categories");
+
   $app->get('/categories/{name}',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
@@ -37,15 +38,12 @@
     }
   )->setName("categoriesID");
 
-
-
   $app->put('/categories/{id}',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Catalogue($this);
   			return $ctrl->updateCategorieId($req,$resp,$args);
   		}
   )->setName("categoriesUpdateID");
-
 
   $app->post('/categories[/]',
     function(Request $req, Response $resp, $args){
@@ -67,6 +65,13 @@
       return $ctrl->getSandwichsId($args,$resp);
     }
   )->setName('sandwichsLink');
+
+  $app->get('/sandwichs/{id}/categories',
+    function(Request $req, Response $resp, $args){
+      $ctrl=new Catalogue($this);
+      return $ctrl->getCategoriesBySandwich($req,$resp,$args);
+    }
+  )->setName('sandwichsCategories');
 
 
   $app->run();

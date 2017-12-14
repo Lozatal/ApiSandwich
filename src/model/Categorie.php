@@ -9,8 +9,8 @@ class Categorie extends \Illuminate\Database\Eloquent\Model {
   public $timestamps = false;
 
 
-  public function sandwitchs(){
-    return $this->belongsToMany( 'lbs\model\Sandwitch',
+  public function sandwichs(){
+    return $this->belongsToMany( 'lbs\model\Sandwich',
                                 'sand2cat',
                                 'cat_id',
                                 'sand_id');
