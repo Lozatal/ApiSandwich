@@ -7,6 +7,7 @@ class Sandwich extends \Illuminate\Database\Eloquent\Model {
   protected $table = 'sandwich';
   protected $primaryKey = 'id';
   public $timestamps = false;
+  protected $hidden = ['pivot'];
 
   public function categories(){
     return $this->belongsToMany( 'lbs\model\Categorie',
@@ -16,7 +17,7 @@ class Sandwich extends \Illuminate\Database\Eloquent\Model {
   }
 
   public function tailles(){
-    return $this->belongsToMany( 'catawich\models\Taille',
+    return $this->belongsToMany( 'lbs\model\Taille',
                                 'tarif',
                                 'sand_id',
                                 'taille_id')
@@ -24,6 +25,6 @@ class Sandwich extends \Illuminate\Database\Eloquent\Model {
   }
 
   public function images(){
-    return $this->hasMany( 'catawich\models\Image', 's_id');
+    return $this->hasMany( 'lbs\model\Image', 's_id');
   }
 }

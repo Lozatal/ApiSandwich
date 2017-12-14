@@ -71,9 +71,9 @@
   $app->get('/categories/{id}/sandwichs',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Catalogue($this);
-  			return $ctrl->getSandwichsId($args,$resp);
+  			return $ctrl->getSandwichsByCategorie($args,$resp);
   		}
-  		)->setName('sandwichsLink');
+  		)->setName('sandwichsByCategorie');
 
 
   $app->run();
