@@ -27,25 +27,14 @@
       $categories=categorie::select("*");
       $categoriesTotal=$categories->get();
       $total = sizeof($categoriesTotal);
-      $categories=$this->pagination($categories,$size,$page,$total);
-      $categories=$categories->get();
+      $returnPag=$this->pagination($categories,$size,$page,$total);
+      $categories=$returnPag["request"]->get();
 
-      $i=0;
-      foreach($categories as $categorie){
-        $tabCategorie[$i]=$categorie;
-        $href["href"]=$this->conteneur->get('router')->pathFor('categoriesID', ['name'=>$categorie['id']]);
-        $tab["self"]=$href;
-        $tabCategorie[$i]["links"]=$tab;
-        $i++;
-      }
+      $tab = $this->addLink($categories, 'categories', 'categoriesID');
+      $json = $this->jsonFormat("categories",$tab,$total,$size,$returnPag["page"]);
 
       $resp=$resp->withHeader('Content-Type','application/json');
-      $tabRendu["type"]="collection";
-      $tabRendu["meta"]["count"]=$total;
-      $tabRendu["meta"]["items"]=$size;
-      $tabRendu["meta"]["page"]=$page;
-      $tabRendu["categories"]=$tabCategorie;
-      $resp->getBody()->write(json_encode($tabRendu));
+      $resp->getBody()->write($json);
       return $resp;
     }
 
@@ -55,7 +44,7 @@
     * Return Response $resp contenant la page complète
     */
     public function getCatalogueId(Request $req, Response $resp, array $args){
-      $id=$args['name'];
+      $id=$args['id'];
       $resp=$resp->withHeader('Content-Type','application/json');
       $categorie = json_encode(categorie::find($id));
       $resp->getBody()->write($categorie);
@@ -115,14 +104,35 @@
     }
 
     /*
-    * Retourne la liste des categories
-    *
+    * Retourne une taille via son ID
+    * @param : Request $req, Response $resp, array $args[]
     */
-    public function getTailleId(array $args, Response $resp){
-      $id=$args['name'];
+    public function getTailleId(Request $req,Response $resp,array $args){
+      $id=$args['id'];
       $resp=$resp->withHeader('Content-Type','application/json');
-      $categorie = json_encode(taille::find($id));
-      $resp->getBody()->write($categorie);
+      $taille = json_encode(taille::find($id));
+      $resp->getBody()->write($taille);
+      return $resp;
+    }
+
+    /*
+    * Retourne la liste des tailles
+    * @param : Request $req, Response $resp, array $args[]
+    */
+    public function getTailles(Request $req,Response $resp,array $args){
+      $size = $req->getQueryParam('size',10);
+      $page = $req->getQueryParam('page',1);
+
+      $tailles=taille::select("*");
+      $total = sizeof($tailles->get());
+      $returnPag=$this->pagination($tailles,$size,$page,$total);
+      $tailles=$returnPag["request"]->get();
+
+      $tab = $this->addLink($tailles, 'tailles', 'tailleID');
+      $json = $this->jsonFormat("tailles",$tab,$total,$size,$returnPag["page"]);
+
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $resp->getBody()->write($json);
       return $resp;
     }
 
@@ -132,7 +142,6 @@
     * Return Response $resp contenant la page complète
     */
     public function getSandwichs(Request $req,Response $resp,array $args){
-
       $type = $req->getQueryParam('type',null);
       $img = $req->getQueryParam('img',null);
       $size = $req->getQueryParam('size',10);
@@ -148,26 +157,16 @@
       }
 
       //Récupération du total d'élement de la recherche
-      $requeteComplete = $q->get();
-      $total = sizeof($requeteComplete);
+      $total = sizeof($q->get());
 
-      $q=$this->pagination($q,$size,$page,$total);
-      $listeSandwichs = $q->get();
+      $returnPag=$this->pagination($q,$size,$page,$total);
+      $listeSandwichs = $returnPag["request"]->get();
 
-      //Construction de la réponse
+      $tab = $this->addLink($listeSandwichs, 'sandwichs', 'sandwichsLink');
+      $json = $this->jsonFormat("sandwichs",$tab,$total,$size,$returnPag["page"]);
+
       $resp=$resp->withHeader('Content-Type','application/json');
-      for($i=0;$i<sizeof($listeSandwichs);$i++){
-        $sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
-        $href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
-        $tab["self"]=$href;
-        $sandwichs[$i]["links"]=$tab;
-      }
-      $tabRendu["type"]="collection";
-      $tabRendu["meta"]["count"]=$total;
-      $tabRendu["meta"]["items"]=$size;
-      $tabRendu["meta"]["page"]=$page;
-      $tabRendu["sandwichs"]=$sandwichs;
-      $resp->getBody()->write(json_encode($tabRendu));
+      $resp->getBody()->write($json);
       return $resp;
     }
 
@@ -190,22 +189,16 @@
     */
     public function getTailleBySandwich(Request $req, Response $resp, array $args){
       $id=$args['id'];
-      $sandwich=sandwich::find($id);
-      $tailles=$sandwich->tailles;
-      $i=0;
-      foreach($tailles as $taille){
-        unset($taille['pivot']);
-        $tabTaille[$i]=$taille;
-        $href["href"]=$this->conteneur->get('router')->pathFor('tailleID', ['name'=>$taille['id']]);
-        $tab["self"]=$href;
-        $tabTaille[$i]["links"]=$tab;
-        $i++;
-      }
+      $item=sandwich::find($id);
+      $belongsToMany=$item->tailles;
+
+      $tab = $this->addLink($belongsToMany, 'tailles', 'tailleID');
+      $json = $this->jsonFormat("tailles",$tab);
+
       $resp=$resp->withHeader('Content-Type','application/json');
-      $listeTaille = json_encode($tabTaille);
-      $resp->getBody()->write($listeTaille);
+      $resp->getBody()->write($json);
       return $resp;
-    }   
+    }
 
     /*
      * Retourne les sandwitchs d'une categorie
@@ -215,7 +208,7 @@
     public function getSandwichsByCategorie(Request $req, Response $resp, array $args){
     	$idCateg=$args['id'];
     	$resp=$resp->withHeader('Content-Type','application/json');
-    	
+
     	try{
     		$categorie = categorie::findOrFail($idCateg);
 	    } catch (ModelNotFoundException $ex) {
@@ -223,39 +216,20 @@
 	    	$resp->getBody()->write(json_encode('Not found'));
 
 	    	return $resp;
-	    	
+
 	    	//return Writer::json_error($resp, code:404, message:'ressource non disponible :'. $this->c->get('router')->pathFor('sandwich', ['id'=>$args['id']]));
 	    }
-	    
+
 	    if($categorie != null){
-	    	
+
 	    	$listeSandwichs = $categorie->sandwichs()
 	    					->select('id','nom','type_pain')
 	    					->get();
-	    	
-	    	$listeSandwichs = $this->addLink($listeSandwichs, 'sandwich', 'sandwichsLink');
+
+	    	$listeSandwichs = $this->addLink($listeSandwichs, 'sandwichs', 'sandwichsLink');
 	    	$resp->getBody()->write(json_encode($listeSandwichs));
-	    }	
+	    }
     	return $resp;
-    }
-
-    /*
-     * Ajoute les links aux objets
-     * @param : $listeSandwich : collection d'objet
-     * @param : $nameObject : nom de l'objet
-     * @param : $pathFor : nom/alias de la route dans le fichier rest.php
-     * Return la liste des sandwichs modifiés
-     */
-    protected function addLink($listeSandwichs, $nameObject, $pathFor){
-    	
-    	for($i=0;$i<sizeof($listeSandwichs);$i++){
-    		$sandwichs[$i][$nameObject]=$listeSandwichs[$i];
-    		$href["href"]=$this->conteneur->get('router')->pathFor($pathFor, ['id'=>$listeSandwichs[$i]['id']]);
-    		$tab["self"]=$href;
-    		$sandwichs[$i]["links"]=$tab;
-    	}
-
-    	return $sandwichs;
     }
 
     /*
@@ -265,17 +239,14 @@
     */
     public function getCategoriesBySandwich(Request $req,Response $resp,array $args){
       $id=$args['id'];
-      $sandwich=sandwich::find($id);
-      $categories=$sandwich->categories;
-      foreach($categories as $categorie){
-        $tabCategorie[]=$categorie;
-        $href["href"]=$this->conteneur->get('router')->pathFor('categoriesID', ['name'=>$categorie['id']]);
-        $tab["self"]=$href;
-        $tabCategorie[]=["links"=>$tab];
-      }
+      $item=sandwich::find($id);
+      $belongsToMany=$item->categories;
+
+      $tab = $this->addLink($belongsToMany, 'categories', 'categoriesID');
+      $json = $this->jsonFormat("categories",$tab);
+
       $resp=$resp->withHeader('Content-Type','application/json');
-      $listeCategorie = json_encode($tabCategorie);
-      $resp->getBody()->write($listeCategorie);
+      $resp->getBody()->write($json);
       return $resp;
     }
 
@@ -298,6 +269,40 @@
       }
       $skip = $taille*($page-1);
       $request=$request->skip($skip)->take($taille);
-      return $request;
+      $tab["request"]=$request;
+      $tab["page"]=$page;
+      return $tab;
+    }
+
+    public function jsonFormat($type, array $tab, $total=null, $size=null, $page=null){
+      $tabRendu["type"]="collection";
+      if($total!=null){
+        $tabRendu["meta"]["count"]=$total;
+      }
+      if($size!=null){
+        $tabRendu["meta"]["items"]=$size;
+      }
+      if($page!=null){
+        $tabRendu["meta"]["page"]=$page;
+      }
+      $tabRendu[$type]=$tab;
+      return json_encode($tabRendu);
+    }
+
+    /*
+     * Ajoute les links aux objets
+     * @param : $listeSandwich : collection d'objet
+     * @param : $nameObject : nom de l'objet
+     * @param : $pathFor : nom/alias de la route dans le fichier rest.php
+     * Return la liste des sandwichs modifiés
+     */
+    protected function addLink($listeSandwichs, $nameObject, $pathFor){
+      for($i=0;$i<sizeof($listeSandwichs);$i++){
+        $sandwichs[$i][$nameObject]=$listeSandwichs[$i];
+        $href["href"]=$this->conteneur->get('router')->pathFor($pathFor, ['id'=>$listeSandwichs[$i]['id']]);
+        $tab["self"]=$href;
+        $sandwichs[$i]["links"]=$tab;
+      }
+      return $sandwichs;
     }
   }
