@@ -19,17 +19,32 @@
     * @param : Response $resp
     * Return Response $resp contenant la page complète
     */
-    public function getCatalogue(Response $resp){
-      $categories=categorie::get();
+    public function getCatalogue(Request $req, Response $resp, array $args){
+      $size = $req->getQueryParam('size',10);
+      $page = $req->getQueryParam('page',1);
+
+      $categories=categorie::select("*");
+      $categoriesTotal=$categories->get();
+      $total = sizeof($categoriesTotal);
+      $categories=$this->pagination($categories,$size,$page,$total);
+      $categories=$categories->get();
+
+      $i=0;
       foreach($categories as $categorie){
-        $tabCategorie[]=$categorie;
+        $tabCategorie[$i]=$categorie;
         $href["href"]=$this->conteneur->get('router')->pathFor('categoriesID', ['name'=>$categorie['id']]);
         $tab["self"]=$href;
-        $tabCategorie[]["links"]=$tab;
+        $tabCategorie[$i]["links"]=$tab;
+        $i++;
       }
+      
       $resp=$resp->withHeader('Content-Type','application/json');
-      $categorie = json_encode($tabCategorie);
-      $resp->getBody()->write($categorie);
+      $tabRendu["type"]="collection";
+      $tabRendu["meta"]["count"]=$total;
+      $tabRendu["meta"]["items"]=$size;
+      $tabRendu["meta"]["page"]=$page;
+      $tabRendu["categories"]=$tabCategorie;
+      $resp->getBody()->write(json_encode($tabRendu));
       return $resp;
     }
 
@@ -38,7 +53,7 @@
     * @param : array $args[], Response $resp
     * Return Response $resp contenant la page complète
     */
-    public function getCatalogueId(array $args, Response $resp){
+    public function getCatalogueId(Request $req, Response $resp, array $args){
       $id=$args['name'];
       $resp=$resp->withHeader('Content-Type','application/json');
       $categorie = json_encode(categorie::find($id));
@@ -69,7 +84,7 @@
     * @param : Request $req, Response $resp, array $args[]
     * Return Response $resp contenant la page complète
     */
-    public function updateCategorieId(Request $req, Response $rs, array $args){
+    public function updateCategorieId(Request $req, Response $resp, array $args){
     	$id=$args['id'];
 
     	$postVar=$req->getParsedBody();
@@ -81,21 +96,21 @@
 		    	$categorie->description= filter_var($postVar['description'],FILTER_SANITIZE_STRING);
 		    	$categorie->save();
 
-		    	$rs=$rs->withHeader('Content-Type','application/json')
+		    	$resp=$resp->withHeader('Content-Type','application/json')
 		    	->withStatus(200)
 		    	->withHeader('Location', '/categories/update');
-		    	$rs->getBody()->write($categorie);
+		    	$resp->getBody()->write($categorie);
     		}
     		else{
-    			$rs=$rs->withStatus(400);
-    			$rs->getBody()->write('Bad request');
+    			$resp=$resp->withStatus(400);
+    			$resp->getBody()->write('Bad request');
     		}
     	}
     	else{
-    		$rs=$rs->withStatus(404);
-    		$rs->getBody()->write('not found');
+    		$resp=$resp->withStatus(404);
+    		$resp->getBody()->write('not found');
     	}
-    	return $rs;
+    	return $resp;
     }
 
     /*
@@ -140,16 +155,18 @@
 
       //Construction de la réponse
       $resp=$resp->withHeader('Content-Type','application/json');
-      $resp=$resp->withHeader('Count',$total);
-      $resp=$resp->withHeader('Size',$size);
-      $resp=$resp->withHeader('Page',$page);
       for($i=0;$i<sizeof($listeSandwichs);$i++){
         $sandwichs[$i]["sandwich"]=$listeSandwichs[$i];
         $href["href"]=$this->conteneur->get('router')->pathFor('sandwichsLink', ['id'=>$listeSandwichs[$i]['id']]);
         $tab["self"]=$href;
         $sandwichs[$i]["links"]=$tab;
       }
-      $resp->getBody()->write(json_encode($sandwichs));
+      $tabRendu["type"]="collection";
+      $tabRendu["meta"]["count"]=$total;
+      $tabRendu["meta"]["items"]=$size;
+      $tabRendu["meta"]["page"]=$page;
+      $tabRendu["sandwichs"]=$sandwichs;
+      $resp->getBody()->write(json_encode($tabRendu));
       return $resp;
     }
 
@@ -158,7 +175,7 @@
     * @param : array $args[], Response $resp
     * Return Response $resp contenant la page complète
     */
-    public function getSandwichsId(array $args, Response $resp){
+    public function getSandwichsId(Request $req, Response $resp, array $args){
       $id=$args['id'];
       $resp=$resp->withHeader('Content-Type','application/json');
       $categorie = json_encode(sandwich::find($id));
@@ -194,7 +211,7 @@
      * @param : array $args[], Response $resp
      * Return Response $resp contenant la page complète
      */
-    public function getSandwichsByCategorie(array $args, Response $resp){
+    public function getSandwichsByCategorie(Request $req, Response $resp, array $args){
     	$idCateg=$args['id'];
     	$resp=$resp->withHeader('Content-Type','application/json');
     	$categorie = categorie::findOrFail($idCateg);

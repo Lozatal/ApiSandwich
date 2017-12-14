@@ -27,14 +27,14 @@
   $app->get('/categories[/]',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
-      return $ctrl->getCatalogue($resp);
+      return $ctrl->getCatalogue($req,$resp,$args);
     }
   )->setName("categories");
 
   $app->get('/categories/{name}',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
-      return $ctrl->getCatalogueId($args,$resp);
+      return $ctrl->getCatalogueId($req,$resp,$args);
     }
   )->setName("categoriesID");
 
@@ -69,14 +69,14 @@
   $app->get('/sandwichs/{id}',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
-      return $ctrl->getSandwichsId($args,$resp);
+      return $ctrl->getSandwichsId($req,$resp,$args);
     }
   )->setName('sandwichsLink');
-  
+
   $app->get('/categories/{id}/sandwichs',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Catalogue($this);
-  			return $ctrl->getSandwichsByCategorie($args,$resp);
+  			return $ctrl->getSandwichsByCategorie($req,$resp,$args);
   		}
   		)->setName('sandwichsByCategorie');
 
