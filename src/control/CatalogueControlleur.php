@@ -6,6 +6,7 @@
   use \Psr\Http\Message\ResponseInterface as Response;
   use lbs\model\Categorie as categorie;
   use lbs\model\Sandwich as sandwich;
+  use lbs\model\Commande as commande;
   use illuminate\database\Eloquent\ModelNotFoundException as ModelNotFoundException;
   use lbs\model\Taille as taille;
 
@@ -299,5 +300,28 @@
       $skip = $taille*($page-1);
       $request=$request->skip($skip)->take($taille);
       return $request;
+    }
+    
+    /*
+     * Créée via une requête POST une nouvelle commandes
+     * @param : Request $req, Response $resp, array $args[]
+     * Return Response $resp contenant la page complète
+     */
+    public function createCommande(Request $req, Response $resp, array $args){
+    	$postVar=$req->getParsedBody();
+    	$commande = new commande();
+    	$commande->nom=filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
+    	$commande->mail=filter_var($postVar['mail'],FILTER_SANITIZE_STRING);
+    	$commande->livraison=filter_var($postVar['livraison'],FILTER_SANITIZE_STRING);
+    	
+    	//A MODIFIER, pour le moment, je met le nom
+    	$commande->token=filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
+    	
+    	$commande->save();
+    	$resp=$resp->withHeader('Content-Type','application/json')
+    	->withStatus(201)
+    	->withHeader('Location', '/commandes/nouvelle');
+    	$resp->getBody()->write('created');
+    	return $resp;
     }
   }
