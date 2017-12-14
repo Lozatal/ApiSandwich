@@ -314,8 +314,8 @@
     	$commande->mail=filter_var($postVar['mail'],FILTER_SANITIZE_STRING);
     	$commande->livraison=filter_var($postVar['livraison'],FILTER_SANITIZE_STRING);
     	
-    	//A MODIFIER, pour le moment, je met le nom
-    	$commande->token=filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
+    	//A MODIFIER, on vérifie pas si le random n'est pas déja utilisé
+    	$commande->token=str_random(5);
     	
     	$commande->save();
     	$resp=$resp->withHeader('Content-Type','application/json')
