@@ -68,6 +68,13 @@
     }
   )->setName('sandwichsLink');
 
+  $app->get('/sandwichs/{id}/taille[/]',
+    function(Request $req, Response $resp, array $args){
+      $ctrl=new Catalogue($this);
+      return $ctrl->getTailleBySandwich($req, $resp, $args);
+    }
+  )->setName('sandwichsTaille');
+
 
   $app->run();
 ?>

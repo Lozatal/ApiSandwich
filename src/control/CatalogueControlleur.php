@@ -6,6 +6,7 @@
   use \Psr\Http\Message\ResponseInterface as Response;
   use lbs\model\Categorie as categorie;
   use lbs\model\Sandwich as sandwich;
+  use lbs\model\Taille as taille;
 
   class CatalogueControlleur{
     public $conteneur=null;
@@ -161,4 +162,20 @@
       $resp->getBody()->write($categorie);
       return $resp;
     }
+
+    public function getTailleBySandwich(Request $req, Response $resp, array $args){
+      $id=$args['taille'];
+      $resp=$resp->withHeader('Content-Type','application/json');
+
+      //$taille = json_encode(sandwich::find($id));
+      $taille = json_encode(sandwich::with('tailles')->where('id','=',$id)->get());
+
+      foreach ($taille->sandwich as $t) 
+      {
+        $resp->getBody()->write($t->pivot->tarif);
+      }
+
+      //$resp->getBody()->write($taille);
+      return $resp;
+    }   
   }
