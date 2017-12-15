@@ -343,4 +343,17 @@
     	$resp->getBody()->write('created');
     	return $resp;
     }
+    
+    /*
+     * Retourne la commande
+     * @param : array $args[], Response $resp
+     * Return Response $resp contenant la page complète
+     */
+    public function getCommandeToken(Response $resp, array $args){
+    	$token=$args['token'];
+    	$resp=$resp->withHeader('Content-Type','application/json');
+    	$commande = json_encode(commande::where('token', '=', $token)->firstOrFail());
+    	$resp->getBody()->write(json_encode($commande));
+    	return $resp;
+    }
   }

@@ -101,11 +101,18 @@
       return $ctrl->getCategoriesBySandwich($req,$resp,$args);
     }
   )->setName('categoriesBySandwich');
+  
+  $app->get('/commandes/{token}',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Catalogue($this);
+  			return $ctrl->getCommandeToken($req,$resp,$args);
+  		}
+  		)->setName('commandeToken');
 
   $app->post('/commandes[/]',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Catalogue($this);
-  			return $ctrl->createCommande($req,$resp,$args);
+  			return $ctrl->createCommande($resp,$args);
   		}
   		)->setName('createCommande');
 
