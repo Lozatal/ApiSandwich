@@ -32,7 +32,7 @@
       $categories=$returnPag["request"]->get();
 
       $tab = $this->addLink($categories, 'categories', 'categoriesID');
-      $json = $this->jsonFormat("categories",$tab,$total,$size,$returnPag["page"]);
+      $json = $this->jsonFormat("categories",$tab,"collection",$total,$size,$returnPag["page"]);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
@@ -130,7 +130,7 @@
       $tailles=$returnPag["request"]->get();
 
       $tab = $this->addLink($tailles, 'tailles', 'tailleID');
-      $json = $this->jsonFormat("tailles",$tab,$total,$size,$returnPag["page"]);
+      $json = $this->jsonFormat("tailles",$tab,"collection",$total,$size,$returnPag["page"]);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
@@ -164,7 +164,7 @@
       $listeSandwichs = $returnPag["request"]->get();
 
       $tab = $this->addLink($listeSandwichs, 'sandwichs', 'sandwichsLink');
-      $json = $this->jsonFormat("sandwichs",$tab,$total,$size,$returnPag["page"]);
+      $json = $this->jsonFormat("sandwichs",$tab,"collection",$total,$size,$returnPag["page"]);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
@@ -179,7 +179,21 @@
     public function getSandwichsId(Request $req, Response $resp, array $args){
       $id=$args['id'];
       $resp=$resp->withHeader('Content-Type','application/json');
-      $categorie = json_encode(sandwich::find($id));
+      $sandwich = sandwich::find($id);
+
+      $sandwich["categories"]=$sandwich->categories()->select("id","nom")->get();
+      $sandwich["tailles"]=$sandwich->tailles()->select("id","nom","prix")->get();
+
+      $href["href"]=$this->conteneur->get('router')->pathFor("categoriesBySandwich", ['id'=>$id]);
+      $links["categories"]=$href;
+      $href["href"]=$this->conteneur->get('router')->pathFor("taillesBySandwich", ['id'=>$id]);
+      $links["tailles"]=$href;
+
+      $tabRendu["type"]="ressource";
+      $tabRendu["sandwich"]=$sandwich;
+      $tabRendu["links"]=$links;
+
+      $categorie = json_encode($tabRendu);
       $resp->getBody()->write($categorie);
       return $resp;
     }
@@ -194,7 +208,7 @@
       $belongsToMany=$item->tailles;
 
       $tab = $this->addLink($belongsToMany, 'tailles', 'tailleID');
-      $json = $this->jsonFormat("tailles",$tab);
+      $json = $this->jsonFormat("tailles",$tab,"collection");
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
@@ -244,7 +258,7 @@
       $belongsToMany=$item->categories;
 
       $tab = $this->addLink($belongsToMany, 'categories', 'categoriesID');
-      $json = $this->jsonFormat("categories",$tab);
+      $json = $this->jsonFormat("categories",$tab,"collection");
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
@@ -275,8 +289,8 @@
       return $tab;
     }
 
-    public function jsonFormat($type, array $tab, $total=null, $size=null, $page=null){
-      $tabRendu["type"]="collection";
+    public function jsonFormat($categorie, array $tab, $type, $total=null, $size=null, $page=null){
+      $tabRendu["type"]=$type;
       if($total!=null){
         $tabRendu["meta"]["count"]=$total;
       }
@@ -286,7 +300,7 @@
       if($page!=null){
         $tabRendu["meta"]["page"]=$page;
       }
-      $tabRendu[$type]=$tab;
+      $tabRendu[$categorie]=$tab;
       return json_encode($tabRendu);
     }
 
@@ -297,16 +311,16 @@
      * @param : $pathFor : nom/alias de la route dans le fichier rest.php
      * Return la liste des sandwichs modifiés
      */
-    protected function addLink($listeSandwichs, $nameObject, $pathFor){
-      for($i=0;$i<sizeof($listeSandwichs);$i++){
-        $sandwichs[$i][$nameObject]=$listeSandwichs[$i];
-        $href["href"]=$this->conteneur->get('router')->pathFor($pathFor, ['id'=>$listeSandwichs[$i]['id']]);
+    protected function addLink($tabObjet, $nameObject, $pathFor){
+      for($i=0;$i<sizeof($tabObjet);$i++){
+        $tabRendu[$i][$nameObject]=$tabObjet[$i];
+        $href["href"]=$this->conteneur->get('router')->pathFor($pathFor, ['id'=>$tabObjet[$i]['id']]);
         $tab["self"]=$href;
-        $sandwichs[$i]["links"]=$tab;
+        $tabRendu[$i]["links"]=$tab;
       }
-      return $sandwichs;
+      return $tabRendu;
     }
-    
+
     /*
      * Créée via une requête POST une nouvelle commandes
      * @param : Request $req, Response $resp, array $args[]
@@ -318,10 +332,10 @@
     	$commande->nom=filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
     	$commande->mail=filter_var($postVar['mail'],FILTER_SANITIZE_STRING);
     	$commande->livraison=filter_var($postVar['livraison'],FILTER_SANITIZE_STRING);
-    	
+
     	//A MODIFIER, on vérifie pas si le random n'est pas déja utilisé
     	$commande->token=str_random(5);
-    	
+
     	$commande->save();
     	$resp=$resp->withHeader('Content-Type','application/json')
     	->withStatus(201)

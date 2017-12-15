@@ -88,20 +88,20 @@
   		)->setName('sandwichsByCategorie');
 
 
-  $app->get('/sandwichs/{id}/tailles[/]',
+  $app->get('/sandwichs/{id}/tailles',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
       return $ctrl->getTailleBySandwich($req, $resp, $args);
     }
-  )->setName('sandwichsTaille');
+  )->setName('taillesBySandwich');
 
   $app->get('/sandwichs/{id}/categories',
     function(Request $req, Response $resp, $args){
       $ctrl=new Catalogue($this);
       return $ctrl->getCategoriesBySandwich($req,$resp,$args);
     }
-  )->setName('sandwichsCategories');
-  
+  )->setName('categoriesBySandwich');
+
   $app->post('/commandes[/]',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Catalogue($this);
