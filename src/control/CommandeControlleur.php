@@ -42,11 +42,11 @@
      * @param : array $args[], Response $resp
      * Return Response $resp contenant la page complète
      */
-    public function getCommandeToken(Response $resp, array $args){
-    	$token=$args['token'];
+    public function getCommande(Response $resp, array $args){
+    	$id=$args['id'];
     	$resp=$resp->withHeader('Content-Type','application/json');
-    	$commande = commande::where('token', '=', $token)->firstOrFail();
-    	$resp->getBody()->write(json_encode($commande));
+    	$commande = commande::find($id);
+    	$resp->getBody()->write(json_encode(["yo"]));
     	return $resp;
     }
   }

@@ -39,6 +39,20 @@
 
   //Application
 
+  function checkToken(Request $rq, Response $rs, callable $next){
+    // récupérer l'identifiant de cmmde dans la route et le token
+    $id = $rq->getAttribute('route')->getArgument( 'id');
+    $token = $rq->getQueryParam('token', null);
+    // vérifier que le token correspond à la commande
+    try {
+      Commande::where('id', '=', $id)->where('token', '=',$token)->firstOrFail();
+    }catch(ModelNotFoundException $e){
+      // générer une erreur
+      return $rs ;
+    };
+    return $next($rq, $rs);
+  };
+
   //Categorie
 
   $app->get('/categories[/]',
@@ -124,12 +138,12 @@
 
   //Commande
 
-  $app->get('/commandes/{token}',
+  $app->get('/commandes/{id}',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Commande($this);
-  			return $ctrl->getCommandeToken($resp,$args);
+  			return $ctrl->getCommande($resp,$args);
   		}
-  		)->setName('commandeToken');
+  	)->setName('commandeToken')->add('checkToken');
 
   $app->post('/commandes[/]',
   		function(Request $req, Response $resp, $args){
