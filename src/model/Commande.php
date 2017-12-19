@@ -8,11 +8,9 @@ class Commande extends \Illuminate\Database\Eloquent\Model {
   protected $primaryKey = 'id';
   public $timestamps = false;
   protected $hidden = ['pivot'];
-
-  public function sandwichs(){
-    return $this->belongsToMany( 'lbs\model\Sandwich',
-                                'comm2sand',
-                                'comm_id',
-                                'sand_id');
+/*
+  public function items(){
+  	return $this->hasMany( 'lbs\model\Item', 'comm_id');
   }
+  */
 }

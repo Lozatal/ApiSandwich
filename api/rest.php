@@ -121,7 +121,7 @@
   $app->get('/commandes/{token}',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Commande($this);
-  			return $ctrl->getCommandeToken($req,$resp,$args);
+  			return $ctrl->getCommandeToken($resp,$args);
   		}
   		)->setName('commandeToken');
 
