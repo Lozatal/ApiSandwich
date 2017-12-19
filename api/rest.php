@@ -148,9 +148,17 @@
   $app->post('/commandes[/]',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Commande($this);
-  			return $ctrl->createCommande($resp,$args);
-  		}
-  		)->setName('createCommande');
+  			return $ctrl->createCommande($req,$resp,$args);
+  		})->setName('createCommande');
+
+  //Item
+
+  $app->post('/commandes/{id}/sandwichs[/]',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Commande($this);
+  			return $ctrl->createItem($resp,$args);
+  		})->setName('createCommande');
+
 
   $app->run();
 ?>
