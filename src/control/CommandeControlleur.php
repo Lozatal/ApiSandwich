@@ -4,10 +4,15 @@
 
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
+
   use lbs\model\Categorie as categorie;
   use lbs\model\Sandwich as sandwich;
   use lbs\model\Commande as commande;
   use lbs\model\Taille as taille;
+
+  use lbs\utils\Writer as writer;
+  use lbs\utils\Pagination as pagination;
+
   use illuminate\database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 
   class CommandeControlleur{
