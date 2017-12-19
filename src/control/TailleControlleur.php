@@ -26,10 +26,9 @@
     * @param : Request $req, Response $resp, array $args[]
     */
     public function getTailleId(Request $req,Response $resp,array $args){
-      $id=$args['id'];
+      $json=writer::jsonFormatRessource("taille",taille::find($args['id']),null);
       $resp=$resp->withHeader('Content-Type','application/json');
-      $taille = json_encode(taille::find($id));
-      $resp->getBody()->write($taille);
+      $resp->getBody()->write($json);
       return $resp;
     }
 
@@ -47,7 +46,7 @@
       $tailles=$returnPag["request"]->get();
 
       $tab = writer::addLink($tailles, 'tailles', 'tailleID');
-      $json = writer::jsonFormat("tailles",$tab,"collection",$total,$size,$returnPag["page"]);
+      $json = writer::jsonFormatCollection("tailles",$tab,$total,$size,$returnPag["page"]);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);

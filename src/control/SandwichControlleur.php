@@ -48,37 +48,30 @@
       $listeSandwichs = $returnPag["request"]->get();
 
       $tab = writer::addLink($listeSandwichs, 'sandwichs', 'sandwichsLink');
-      $json = writer::jsonFormat("sandwichs",$tab,"collection",$total,$size,$returnPag["page"]);
+      $json = writer::jsonFormatCollection("sandwichs",$tab,$total,$size,$returnPag["page"]);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
       return $resp;
     }
 
-    /*$sandwichCategories
+    /*
     * Retourne un sandwichs via son id
     * @param : array $args[], Response $resp
     * Return Response $resp contenant la page complète
     */
     public function getSandwichsId(Request $req, Response $resp, array $args){
       $id=$args['id'];
-      $resp=$resp->withHeader('Content-Type','application/json');
       $sandwich = sandwich::find($id);
-
       $sandwich["categories"]=$sandwich->categories()->select("id","nom")->get();
       $sandwich["tailles"]=$sandwich->tailles()->select("id","nom","prix")->get();
 
-      $href["href"]=$this->conteneur->get('router')->pathFor("categoriesBySandwich", ['id'=>$id]);
-      $links["categories"]=$href;
-      $href["href"]=$this->conteneur->get('router')->pathFor("taillesBySandwich", ['id'=>$id]);
-      $links["tailles"]=$href;
+      $link["categories"]=writer::addLinks("categoriesBySandwich",$id);
+      $link["tailles"]=writer::addLinks("taillesBySandwich",$id);
+      $json=writer::jsonFormatRessource("sandwich",$sandwich,$link);
 
-      $tabRendu["type"]="ressource";
-      $tabRendu["sandwich"]=$sandwich;
-      $tabRendu["links"]=$links;
-
-      $categorie = json_encode($tabRendu);
-      $resp->getBody()->write($categorie);
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $resp->getBody()->write($json);
       return $resp;
     }
 
@@ -92,7 +85,7 @@
       $belongsToMany=$item->tailles;
 
       $tab = writer::addLink($belongsToMany, 'tailles', 'tailleID');
-      $json = writer::jsonFormat("tailles",$tab,"collection");
+      $json = writer::jsonFormatCollection("tailles",$tab);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
@@ -110,7 +103,7 @@
       $belongsToMany=$item->categories;
 
       $tab = writer::addLink($belongsToMany, 'categories', 'categoriesID');
-      $json = writer::jsonFormat("categories",$tab,"collection");
+      $json = writer::jsonFormatCollection("categories",$tab);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);

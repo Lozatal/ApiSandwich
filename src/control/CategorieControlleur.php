@@ -37,7 +37,7 @@
       $categories=$returnPag["request"]->get();
 
       $tab = writer::addLink($categories, 'categories', 'categoriesID');
-      $json = writer::jsonFormat("categories",$tab,"collection",$total,$size,$returnPag["page"]);
+      $json = writer::jsonFormatCollection("categories",$tab,$total,$size,$returnPag["page"]);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
@@ -51,18 +51,12 @@
     */
     public function getCatalogueId(Request $req, Response $resp, array $args){
       $id=$args['id'];
-      $resp=$resp->withHeader('Content-Type','application/json');
 
       $categorie = categorie::find($id);
+      $links["sandwichs"] = writer::addLinks("sandwichsByCategorie",$id);
+      $json =writer::jsonFormatRessource("categorie",$categorie,$links);
 
-      $href["href"]=$this->conteneur->get('router')->pathFor("sandwichsByCategorie", ['id'=>$id]);
-      $links["sandwichs"]=$href;
-
-      $tabRendu["type"]="ressource";
-      $tabRendu["categorie"]=$categorie;
-      $tabRendu["links"]=$links;
-
-      $json = json_encode($tabRendu);
+      $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
       return $resp;
     }
@@ -103,8 +97,8 @@
 		    	$categorie->save();
 
 		    	$resp=$resp->withHeader('Content-Type','application/json')
-		    	->withStatus(200)
-		    	->withHeader('Location', '/categories/update');
+		    	           ->withStatus(200)
+		    	           ->withHeader('Location', '/categories/update');
 		    	$resp->getBody()->write($categorie);
     		}
     		else{
