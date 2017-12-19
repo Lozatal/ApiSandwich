@@ -58,6 +58,7 @@
     public function getSandwichsId(Request $req, Response $resp, array $args){
       $id=$args['id'];
       $resp=$resp->withHeader('Content-Type','application/json');
+      
       $sandwich = sandwich::find($id);
 
       $sandwich["categories"]=$sandwich->categories()->select("id","nom")->get();

@@ -21,7 +21,8 @@
   //Création et configuration du container
   $configuration=[
     'settings'=>[
-      'displayErrorDetails'=>true
+      'displayErrorDetails'=>true,
+      'production' => false
     ]
   ];
 
