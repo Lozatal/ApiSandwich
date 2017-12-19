@@ -7,7 +7,9 @@ class Commande extends \Illuminate\Database\Eloquent\Model {
   protected $table = 'commande';
   protected $primaryKey = 'id';
   public $timestamps = false;
-  protected $hidden = ['pivot'];
+  public $incrementing = false;
+  public $keyType = 'string';
+ 
 /*
   public function items(){
   	return $this->hasMany( 'lbs\model\Item', 'comm_id');
