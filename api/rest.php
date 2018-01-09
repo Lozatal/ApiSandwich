@@ -2,7 +2,6 @@
   require_once __DIR__ . '/../src/vendor/autoload.php';
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
-    use \lbs\control\CatalogueControlleur as Catalogue;
 
   /* Appel des contrôleurs */
 
@@ -10,6 +9,10 @@
   use \lbs\control\SandwichControlleur as Sandwich;
   use \lbs\control\TailleControlleur as Taille;
   use \lbs\control\CommandeControlleur as Commande;
+
+  /* Appel des utilitaires */
+
+  use \lbs\utils\Writer as writer;
 
 
   $config=parse_ini_file("../src/config/lbs.db.conf.ini");
@@ -31,6 +34,9 @@
   $c=new \Slim\Container(array_merge( $configuration, $errors) );
   $app=new \Slim\App($c);
   $c = $app->getContainer();
+
+  //Initialisation du conteneur pour le writer
+  new writer($c);
 
   //Application
 
@@ -122,7 +128,7 @@
   $app->get('/commandes/{token}',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Commande($this);
-  			return $ctrl->getCommandeToken($req,$resp,$args);
+  			return $ctrl->getCommandeToken($resp,$args);
   		}
   		)->setName('commandeToken');
 

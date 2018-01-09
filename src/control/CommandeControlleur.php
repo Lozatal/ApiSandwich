@@ -4,10 +4,7 @@
 
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
-  use lbs\model\Categorie as categorie;
-  use lbs\model\Sandwich as sandwich;
   use lbs\model\Commande as commande;
-  use lbs\model\Taille as taille;
   use illuminate\database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 
   class CommandeControlleur{
@@ -25,6 +22,7 @@
     	$postVar=$req->getParsedBody();
     	$commande = new commande();
     	$commande->nom=filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
+    	//$commande->prenom=filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
     	$commande->mail=filter_var($postVar['mail'],FILTER_SANITIZE_STRING);
     	$commande->livraison=filter_var($postVar['livraison'],FILTER_SANITIZE_STRING);
 
@@ -47,7 +45,7 @@
     public function getCommandeToken(Response $resp, array $args){
     	$token=$args['token'];
     	$resp=$resp->withHeader('Content-Type','application/json');
-    	$commande = json_encode(commande::where('token', '=', $token)->firstOrFail());
+    	$commande = commande::where('token', '=', $token)->firstOrFail();
     	$resp->getBody()->write(json_encode($commande));
     	return $resp;
     }
