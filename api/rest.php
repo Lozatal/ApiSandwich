@@ -91,7 +91,7 @@
     }
   )->setName('createCategorie');
 
-  $app->get('/categories/{id}/sandwichs',
+  $app->get('/categories/{id}/sandwichsCategorie',
       function(Request $req, Response $resp, $args){
         $ctrl=new Categorie($this);
         return $ctrl->getSandwichsByCategorie($req,$resp,$args);
@@ -151,13 +151,14 @@
   			$ctrl=new Commande($this);
   			return $ctrl->getCommande($resp,$args);
   		}
-  	)->setName('commandeToken')->add('checkToken');
+  )->setName('commandeToken')->add('checkToken');
 
   $app->post('/commandes[/]',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Commande($this);
   			return $ctrl->createCommande($req,$resp,$args);
-  		})->setName('createCommande');
+  		}
+  )->setName('createCommande');
 
   //Item
 
@@ -165,7 +166,24 @@
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Commande($this);
   			return $ctrl->createItem($resp,$args);
-  		})->setName('createCommande');
+  		}
+  )->setName('createCommande');
+
+  //Carte de fidélité
+
+  $app->get('/carte/{id}/auth[/]',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Commande($this);
+  			return $ctrl->createItem($resp,$args);
+  		}
+  )->setName('createCommande'); //Avec token JWT
+
+  $app->get('/carte/{id}',
+      function(Request $req, Response $resp, $args){
+        $ctrl=new Commande($this);
+        return $ctrl->createItem($resp,$args);
+      }
+  )->setName('createCommande');
 
 
   $app->run();
