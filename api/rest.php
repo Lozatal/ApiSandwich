@@ -176,14 +176,14 @@
   $app->get('/carte/{id}/auth[/]',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Carte($this);
-  			return $ctrl->authentification($resp,$args);
+  			return $ctrl->authentification($req,$resp,$args);
   		}
   )->setName('authentification'); //Avec token JWT
 
   $app->get('/carte/{id}',
       function(Request $req, Response $resp, $args){
         $ctrl=new Carte($this);
-        return $ctrl->getCarte($resp,$args);
+        return $ctrl->getCarte($req,$resp,$args);
       }
   )->setName('getCarte');
 
