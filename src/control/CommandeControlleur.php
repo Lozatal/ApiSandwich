@@ -34,18 +34,7 @@
     	$commande->save();
     	
     	//Maintenant on va créer un objet que l'on va présenter à l'utilisateur
-    	$commandeFormate = (object)[
-    			"nom_client"=> $commande->nom,
-    			"prenom_client"=> $commande->prenom,
-    			"mail_client"=> $commande->mail,
-    			"livraison"=>[
-    					"date"=> $commande->livraison->format('d-m-Y'),
-    					"heure"=> $commande->livraison->format('H-i')
-    			],
-    			"etat"=>"créé",
-    			"id"=>$commande->id,
-    			"token"=>$commande->token	
-    	];
+    	$commandeFormate = $this->returnCommandeFormate($commande);
     	
     	
     	$resp=$resp->withHeader('Content-Type','application/json')
@@ -64,7 +53,33 @@
     	$id=$args['id'];
     	$resp=$resp->withHeader('Content-Type','application/json');
     	$commande = commande::where('id', '=', $id)->firstOrFail();
-    	$resp->getBody()->write(json_encode($commande));
+    	
+    	//Maintenant on va créer un objet que l'on va présenter à l'utilisateur
+    	$commandeFormate = $this->returnCommandeFormate($commande);
+    	
+    	$resp->getBody()->write(json_encode($commandeFormate));
     	return $resp;
+    }
+    
+    /*
+     * Renvoie l'objet commande formate
+     * @param : $commande => l'objet commande d'origine
+     * Return l'objet formate
+     */
+    public function returnCommandeFormate($commande){
+    	$commandeFormate = (object)[
+    			"nom_client"=> $commande->nom,
+    			"prenom_client"=> $commande->prenom,
+    			"mail_client"=> $commande->mail,
+    			"livraison"=>[
+    					"date"=> $commande->livraison->format('d-m-Y'),
+    					"heure"=> $commande->livraison->format('H-i')
+    			],
+    			"etat"=>"créé",
+    			"id"=>$commande->id,
+    			"token"=>$commande->token
+    	];
+    	
+    	return $commandeFormate;
     }
   }
