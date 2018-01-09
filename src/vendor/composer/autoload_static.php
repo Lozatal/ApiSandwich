@@ -26,6 +26,7 @@ class ComposerStaticInitdaebacae3d1d63fbcdae97b065a021d2
         ),
         'R' => 
         array (
+            'Respect\\Validation\\' => 19,
             'Ramsey\\Uuid\\' => 12,
         ),
         'P' => 
@@ -49,6 +50,7 @@ class ComposerStaticInitdaebacae3d1d63fbcdae97b065a021d2
         'D' => 
         array (
             'Doctrine\\Common\\Inflector\\' => 26,
+            'DavidePastore\\Slim\\Validation\\' => 30,
         ),
         'C' => 
         array (
@@ -72,6 +74,10 @@ class ComposerStaticInitdaebacae3d1d63fbcdae97b065a021d2
         'Slim\\' => 
         array (
             0 => __DIR__ . '/..' . '/slim/slim/Slim',
+        ),
+        'Respect\\Validation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/respect/validation/library',
         ),
         'Ramsey\\Uuid\\' => 
         array (
@@ -116,6 +122,10 @@ class ComposerStaticInitdaebacae3d1d63fbcdae97b065a021d2
         'Doctrine\\Common\\Inflector\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
+        ),
+        'DavidePastore\\Slim\\Validation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/davidepastore/slim-validation/src',
         ),
         'Carbon\\' => 
         array (
