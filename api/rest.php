@@ -10,6 +10,7 @@
   use \lbs\control\SandwichControlleur as Sandwich;
   use \lbs\control\TailleControlleur as Taille;
   use \lbs\control\CommandeControlleur as Commande;
+  use \lbs\control\CarteControlleur as Carte;
 
   /* Appel des modèles */
 
@@ -173,14 +174,14 @@
 
   $app->get('/carte/{id}/auth[/]',
   		function(Request $req, Response $resp, $args){
-  			$ctrl=new Commande($this);
+  			$ctrl=new Carte($this);
   			return $ctrl->createItem($resp,$args);
   		}
   )->setName('createCommande'); //Avec token JWT
 
   $app->get('/carte/{id}',
       function(Request $req, Response $resp, $args){
-        $ctrl=new Commande($this);
+        $ctrl=new Carte($this);
         return $ctrl->createItem($resp,$args);
       }
   )->setName('createCommande');
