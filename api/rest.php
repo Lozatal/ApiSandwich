@@ -2,6 +2,7 @@
   require_once __DIR__ . '/../src/vendor/autoload.php';
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
+  use illuminate\database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 
   /* Appel des contrôleurs */
 
@@ -9,6 +10,11 @@
   use \lbs\control\SandwichControlleur as Sandwich;
   use \lbs\control\TailleControlleur as Taille;
   use \lbs\control\CommandeControlleur as Commande;
+  use \lbs\control\CarteControlleur as Carte;
+
+  /* Appel des modèles */
+
+  use \lbs\model\Commande as ModelCommande;
 
   /* Appel des utilitaires */
 
@@ -40,6 +46,23 @@
 
   //Application
 
+  function checkToken(Request $rq, Response $rs, callable $next){
+    // récupérer l'identifiant de commde dans la route et le token
+    $id = $rq->getAttribute('route')->getArgument( 'id');
+    $token = $rq->getQueryParam('token', null);
+    // vérifier que le token correspond à la commande
+    try
+    {
+        ModelCommande::where('id', '=', $id)->where('token', '=',$token)->firstOrFail();
+    } catch (ModelNotFoundException $e) {
+        $rs= $rs->withStatus(404);
+        $temp = array("type" => "error", "error" => '404', "message" => "Le token n'est pas valide");
+        $rs->getBody()->write(json_encode($temp));
+        return $rs;
+    };
+    return $next($rq, $rs);
+  };
+
   //Categorie
 
   $app->get('/categories[/]',
@@ -70,7 +93,7 @@
     }
   )->setName('createCategorie');
 
-  $app->get('/categories/{id}/sandwichs',
+  $app->get('/categories/{id}/sandwichsCategorie',
       function(Request $req, Response $resp, $args){
         $ctrl=new Categorie($this);
         return $ctrl->getSandwichsByCategorie($req,$resp,$args);
@@ -125,19 +148,45 @@
 
   //Commande
 
-  $app->get('/commandes/{token}',
+  $app->get('/commandes/{id}',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Commande($this);
-  			return $ctrl->getCommandeToken($resp,$args);
+  			return $ctrl->getCommande($resp,$args);
   		}
-  		)->setName('commandeToken');
+  )->setName('commandeToken')->add('checkToken');
 
   $app->post('/commandes[/]',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Commande($this);
-  			return $ctrl->createCommande($resp,$args);
+  			return $ctrl->createCommande($req,$resp,$args);
   		}
-  		)->setName('createCommande');
+  )->setName('createCommande');
+
+  //Item
+
+  $app->post('/commandes/{id}/sandwichs[/]',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Commande($this);
+  			return $ctrl->createItem($resp,$args);
+  		}
+  )->setName('createCommande');
+
+  //Carte de fidélité
+
+  $app->get('/carte/{id}/auth[/]',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Carte($this);
+  			return $ctrl->authentification($resp,$args);
+  		}
+  )->setName('authentification'); //Avec token JWT
+
+  $app->get('/carte/{id}',
+      function(Request $req, Response $resp, $args){
+        $ctrl=new Carte($this);
+        return $ctrl->getCarte($resp,$args);
+      }
+  )->setName('getCarte');
+
 
   $app->run();
 ?>
