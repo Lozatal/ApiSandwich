@@ -20,7 +20,7 @@
      * Return Response $resp contenant la page complète
      */
     public function createCommande(Request $req, Response $resp, array $args){
-    	
+
     	$postVar=$req->getParsedBody();
     	$commande = new commande();
     	$commande->id= Uuid::uuid1();
@@ -30,13 +30,25 @@
     	$commande->livraison= \DateTime::createFromFormat('d-m-Y H:i',$postVar['livraison']['date'].' '.$postVar['livraison']['heure']);
     	$commande->token=bin2hex(random_bytes(32));
     	$commande->etat=1; // created
-    	
+
     	$commande->save();
-    	
+
     	//Maintenant on va créer un objet que l'on va présenter à l'utilisateur
     	$commandeFormate = $this->returnCommandeFormate($commande);
-    	
-    	
+/*
+    	$commandeFormate = (object)[
+    			"nom_client"=> $commande->nom,
+    			"prenom_client"=> $commande->prenom,
+    			"mail_client"=> $commande->mail,
+    			"livraison"=>[
+    					"date"=> $commande->livraison->format('d-m-Y'),
+    					"heure"=> $commande->livraison->format('H-i')
+    			],
+    			"etat"=>"créé",
+    			"id"=>$commande->id,
+    			"token"=>$commande->token
+    	];
+*/
     	$resp=$resp->withHeader('Content-Type','application/json')
     	->withStatus(201)
     	->withHeader('Location', '/commandes/nouvelle');

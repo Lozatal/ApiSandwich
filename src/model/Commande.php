@@ -9,7 +9,7 @@ class Commande extends \Illuminate\Database\Eloquent\Model {
   public $timestamps = false;
   public $incrementing = false;
   public $keyType = 'string';
- 
+
 /*
   public function items(){
   	return $this->hasMany( 'lbs\model\Item', 'comm_id');
