@@ -34,6 +34,7 @@
     	$commande->save();
 
     	//Maintenant on va créer un objet que l'on va présenter à l'utilisateur
+    	$commande->livraison = $postVar['livraison']['date'].' '.$postVar['livraison']['heure'];
     	$commandeFormate = $this->returnCommandeFormate($commande);
 /*
     	$commandeFormate = (object)[
