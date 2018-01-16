@@ -22,14 +22,27 @@
     }
 
     /*
-    * Retourne la liste des Sandwichs, avec filtre et pagination
+    * Retourne la liste des Sandwichs par categories
     * @param : Request $req, Response $resp, array $args[]
     * Return Response $resp contenant la page complète
     */
     public function getSandwichs(Request $req,Response $resp,array $args){
-
+      $categories=categorie::select("*")->get();
+      $sandwichs=[];
+      foreach($categories as $categorie){
+        $sandwich=$categorie->sandwichs()->select('id','nom','type_pain')->get();
+        $sandwichs[$categorie['id']]=$sandwich;
+      }
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $resp->getBody()->write(json_encode($sandwichs));
+      return $resp;
     }
 
+    /*
+    * Supprime un sandwich par son ID
+    * @param : Request $req, Response $resp, array $args[]
+    * Return Response $resp contenant la page complète
+    */
     public function deleteSandwich(Request $req,Response $resp,array $args){
       $id=$args['id'];
 
@@ -48,6 +61,11 @@
     	return $resp;
     }
 
+    /*
+    * Ajoute un sandwich
+    * @param : Request $req, Response $resp, array $args[]
+    * Return Response $resp contenant la page complète
+    */
     public function ajouterSandwich(Request $req,Response $resp,array $args){
       $postVar=$req->getParsedBody();
       $sandwich = new sandwich();
@@ -62,6 +80,11 @@
       return $resp;
     }
 
+    /*
+    * Modifie un sandwich via son ID
+    * @param : Request $req, Response $resp, array $args[]
+    * Return Response $resp contenant la page complète
+    */
     public function modifierSandwich(Request $req,Response $resp,array $args){
       $id=$args['id'];
 
