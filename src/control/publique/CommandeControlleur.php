@@ -1,6 +1,6 @@
 <?php
 
-  namespace lbs\control;
+  namespace lbs\control\publique;
 
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
@@ -54,14 +54,14 @@
     	$id=$args['id'];
     	$resp=$resp->withHeader('Content-Type','application/json');
     	$commande = commande::where('id', '=', $id)->firstOrFail();
-    	
+
     	//Maintenant on va créer un objet que l'on va présenter à l'utilisateur
     	$commandeFormate = $this->returnCommandeFormate($commande);
-    	
+
     	$resp->getBody()->write(json_encode($commandeFormate));
     	return $resp;
     }
-    
+
     /*
      * Renvoie l'objet commande formate
      * @param : $commande => l'objet commande d'origine
@@ -71,13 +71,13 @@
     	$dateTime = null;
     	$date = '';
     	$heure = '';
-    	
+
     	if ($commande->livraison != null){
     		$dateTime = explode(' ' , $commande->livraison);
     		$date = $dateTime[0];
     		$heure = $dateTime[1];
     	}
-    	
+
     	$commandeFormate = (object)[
     			"nom_client"=> $commande->nom,
     			"prenom_client"=> $commande->prenom,
@@ -90,7 +90,7 @@
     			"id"=>$commande->id,
     			"token"=>$commande->token
     	];
-    	
+
     	return $commandeFormate;
     }
   }

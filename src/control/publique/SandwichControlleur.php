@@ -1,6 +1,6 @@
 <?php
 
-  namespace lbs\control;
+  namespace lbs\control\publique;
 
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
@@ -33,7 +33,6 @@
       $page = $req->getQueryParam('page',1);
 
       $q = sandwich::select('id','nom','type_pain');
-
       if(!is_null($type)){
         $q=$q->where('type_pain','LIKE','%'.$req->getQueryParam('type').'%');
       }
@@ -61,18 +60,27 @@
     * Return Response $resp contenant la page complète
     */
     public function getSandwichsId(Request $req, Response $resp, array $args){
-      $id=$args['id'];
-      $sandwich = sandwich::find($id);
-      $sandwich["categories"]=$sandwich->categories()->select("id","nom")->get();
-      $sandwich["tailles"]=$sandwich->tailles()->select("id","nom","prix")->get();
+        $id=$args['id'];
+        $resp=$resp->withHeader('Content-Type','application/json');
 
-      $link["categories"]=writer::addLinks("categoriesBySandwich",$id);
-      $link["tailles"]=writer::addLinks("taillesBySandwich",$id);
-      $json=writer::jsonFormatRessource("sandwich",$sandwich,$link);
+        $sandwich = sandwich::find($id);
+        if($sandwich==null){//Si id introuvable
+          $json["erreur"]="Id trouvable";
+          $resp=$resp->withHeader('Content-Type','application/json')->withStatus(204);
+          $resp->getBody()->write(json_encode($json));
+        }else{
+          $sandwich["categories"]=$sandwich->categories()->select("id","nom")->get();
+          $sandwich["tailles"]=$sandwich->tailles()->select("id","nom","prix")->get();
 
-      $resp=$resp->withHeader('Content-Type','application/json');
-      $resp->getBody()->write($json);
-      return $resp;
+          $link["categories"]=writer::addLinks("categoriesBySandwich",$id);
+          $link["tailles"]=writer::addLinks("taillesBySandwich",$id);
+          $json=writer::jsonFormatRessource("sandwich",$sandwich,$link);
+
+          $resp=$resp->withHeader('Content-Type','application/json');
+          $resp->getBody()->write($json);
+        }
+
+        return $resp;
     }
 
     /*
@@ -84,11 +92,16 @@
       $item=sandwich::find($id);
       $belongsToMany=$item->tailles;
 
-      $tab = writer::addLink($belongsToMany, 'tailles', 'tailleID');
-      $json = writer::jsonFormatCollection("tailles",$tab);
-
-      $resp=$resp->withHeader('Content-Type','application/json');
-      $resp->getBody()->write($json);
+      if($item==null){
+          $json["erreur"]="Ce sandwich n'a pas de taille disponibles";
+          $resp=$resp->withHeader('Content-Type','application/json')->withStatus(204);
+          $resp->getBody()->write(json_encode($json));
+        }else{
+          $tab = writer::addLink($belongsToMany, 'tailles', 'tailleID');
+          $json = writer::jsonFormatCollection("tailles",$tab);
+          $resp=$resp->withHeader('Content-Type','application/json');
+          $resp->getBody()->write($json);
+        }
       return $resp;
     }
 
@@ -103,10 +116,12 @@
       $belongsToMany=$item->categories;
 
       $tab = writer::addLink($belongsToMany, 'categories', 'categoriesID');
-      $json = writer::jsonFormatCollection("categories",$tab);
+        $json = writer::jsonFormatCollection("categories",$tab);
 
-      $resp=$resp->withHeader('Content-Type','application/json');
-      $resp->getBody()->write($json);
+        $resp=$resp->withHeader('Content-Type','application/json');
+        $resp->getBody()->write($json);
+
+
       return $resp;
     }
   }

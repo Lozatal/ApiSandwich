@@ -8,11 +8,11 @@
 
   /* Appel des contrôleurs */
 
-  use \lbs\control\CategorieControlleur as Categorie;
-  use \lbs\control\SandwichControlleur as Sandwich;
-  use \lbs\control\TailleControlleur as Taille;
-  use \lbs\control\CommandeControlleur as Commande;
-  use \lbs\control\CarteControlleur as Carte;
+  use \lbs\control\publique\CategorieControlleur as Categorie;
+  use \lbs\control\publique\SandwichControlleur as Sandwich;
+  use \lbs\control\publique\TailleControlleur as Taille;
+  use \lbs\control\publique\CommandeControlleur as Commande;
+  use \lbs\control\publique\CarteControlleur as Carte;
 
   /* Appel des modèles */
 
@@ -32,7 +32,8 @@
   //Création et configuration du container
   $configuration=[
     'settings'=>[
-      'displayErrorDetails'=>true
+      'displayErrorDetails'=>true,
+      'production' => false
     ]
   ];
 
@@ -201,14 +202,14 @@
   $app->get('/carte/{id}/auth[/]',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Carte($this);
-  			return $ctrl->authentification($resp,$args);
+  			return $ctrl->authentification($req,$resp,$args);
   		}
   )->setName('authentification'); //Avec token JWT
 
   $app->get('/carte/{id}',
       function(Request $req, Response $resp, $args){
         $ctrl=new Carte($this);
-        return $ctrl->getCarte($resp,$args);
+        return $ctrl->getCarte($req,$resp,$args);
       }
   )->setName('getCarte');
 

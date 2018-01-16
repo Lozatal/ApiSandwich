@@ -39,7 +39,10 @@
         $tab["self"]=$href;
         $tabRendu[$i]["links"]=$tab;
       }
-      return $tabRendu;
+      if (isset($tabRendu)) {
+        return $tabRendu;
+      }
+      
     }
 
     public static function addLinks($pathfor,$id){
