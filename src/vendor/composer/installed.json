@@ -17,7 +17,7 @@
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2017-02-14T16:28:37+00:00",
+        "time": "2017-02-14 16:28:37",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -68,7 +68,7 @@
         "require": {
             "psr/container": "^1.0"
         },
-        "time": "2017-02-14T19:40:03+00:00",
+        "time": "2017-02-14 19:40:03",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -101,7 +101,7 @@
         "require": {
             "php": ">=5.4.0"
         },
-        "time": "2017-01-19T11:35:12+00:00",
+        "time": "2017-01-19 11:35:12",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -146,7 +146,7 @@
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2016-08-06T14:39:51+00:00",
+        "time": "2016-08-06 14:39:51",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -202,7 +202,7 @@
         "require-dev": {
             "symfony/phpunit-bridge": "^3.2"
         },
-        "time": "2017-07-23T07:32:15+00:00",
+        "time": "2017-07-23 07:32:15",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -262,7 +262,7 @@
             "phpunit/phpunit": "^4.0",
             "squizlabs/php_codesniffer": "^2.5"
         },
-        "time": "2017-11-04T08:46:46+00:00",
+        "time": "2017-11-04 08:46:46",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -326,7 +326,7 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2017-10-11T12:05:26+00:00",
+        "time": "2017-10-11 12:05:26",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -400,7 +400,7 @@
             "symfony/config": "",
             "symfony/yaml": ""
         },
-        "time": "2017-11-07T14:12:55+00:00",
+        "time": "2017-11-07 14:12:55",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -456,7 +456,7 @@
             "friendsofphp/php-cs-fixer": "~2",
             "phpunit/phpunit": "~4.0 || ~5.0"
         },
-        "time": "2017-01-16T07:55:07+00:00",
+        "time": "2017-01-16 07:55:07",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -506,7 +506,7 @@
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2017-01-02T13:31:39+00:00",
+        "time": "2017-01-02 13:31:39",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -558,7 +558,7 @@
             "psr/container": "~1.0",
             "psr/simple-cache": "~1.0"
         },
-        "time": "2017-09-19T13:09:37+00:00",
+        "time": "2017-09-19 13:09:37",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -605,7 +605,7 @@
         "require-dev": {
             "phpunit/phpunit": "^6.2"
         },
-        "time": "2017-07-22T12:18:28+00:00",
+        "time": "2017-07-22 12:18:28",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -683,7 +683,7 @@
             "symfony/process": "Required to use the composer class (~3.3).",
             "symfony/var-dumper": "Required to use the dd function (~3.3)."
         },
-        "time": "2017-10-17T12:18:29+00:00",
+        "time": "2017-10-17 12:18:29",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -732,7 +732,7 @@
             "php": ">=7.0",
             "psr/container": "~1.0"
         },
-        "time": "2017-08-14T18:00:01+00:00",
+        "time": "2017-08-14 18:00:01",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -787,7 +787,7 @@
             "illuminate/filesystem": "Required to use the migrations (5.5.*).",
             "illuminate/pagination": "Required to paginate the result set (5.5.*)."
         },
-        "time": "2017-10-17T12:16:50+00:00",
+        "time": "2017-10-17 12:16:50",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -843,7 +843,7 @@
         "suggest": {
             "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
         },
-        "time": "2017-09-27T21:40:39+00:00",
+        "time": "2017-09-27 21:40:39",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -913,7 +913,7 @@
             "ramsey/uuid-console": "A console application for generating UUIDs with ramsey/uuid",
             "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
         },
-        "time": "2017-09-22T20:46:04+00:00",
+        "time": "2017-09-22 20:46:04",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -952,5 +952,53 @@
             "identifier",
             "uuid"
         ]
+    },
+    {
+        "name": "firebase/php-jwt",
+        "version": "v5.0.0",
+        "version_normalized": "5.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/firebase/php-jwt.git",
+            "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/firebase/php-jwt/zipball/9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
+            "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": " 4.8.35"
+        },
+        "time": "2017-06-27 22:17:23",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Firebase\\JWT\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Neuman Vong",
+                "email": "neuman+pear@twilio.com",
+                "role": "Developer"
+            },
+            {
+                "name": "Anant Narayanan",
+                "email": "anant@php.net",
+                "role": "Developer"
+            }
+        ],
+        "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
+        "homepage": "https://github.com/firebase/php-jwt"
     }
 ]

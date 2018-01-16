@@ -1,73 +1,85 @@
 <?php
 
-	namespace lbs\api\control;
+namespace lbs\control;
 
-	use Firebase\JWT\JWT;
+use Firebase\JWT\JWT;
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
 
-	class AuthController {
+use lbs\utils\Writer as Writer;
 
-	private $container;
+use lbs\model\Commande as commande;
+use lbs\model\Carte as Carte;
 
-		public function  __construct(\Slim\Container $c)
-		{
-			$this->container = $c;
-		}
+class AuthController {
 
-		public function authenticate($req, $resp, $args) {
+	public $conteneur=null;
+    public function __construct($conteneur){
+      $this->conteneur=$conteneur;
+    }
 
-			$rs= $resp->withHeader( 'Content-type', "application/json;charset=utf-8");
+	public function authenticate(Request $req,Response $resp,array $args) {
 
-			if(!$req->hasHeader('Authorization')) {
+  		if(!$req->hasHeader('Authorization')) {
 
-				$rs = $rs->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
+				$resp = $resp->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
 				$resp= $resp->withStatus(401);
 				$temp = array("type" => "error", "error" => '401', "message" => "No Authorization in header");
 
-				$rs->getBody()->write(json_encode($temp));
+				$resp->getBody()->write(json_encode($temp));
 
-				return $rs;
-
-			}
-
-			$auth = base64_decode( explode( " ", $req->getHeader('Authorization')[0]) [1] );
-			list($user, $pass) = explode(':', $auth);
-
-			try {
-				$carte = \lbs\common\models\Carte::select('id', 'nom', 'passwd')
-					->where('id', '=', $args['id'])
-					->where('nom', '=', $user)
-					->firstOrFail();
-
-				if(!password_verify($pass, $carte->passwd)) {
-					throw new \Exception("Authentification incorrecte");
-
-				}
-
-			} catch(\Exception $e){
-
-				$rs = $rs->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
-				$resp= $resp->withStatus(401);
-				$temp = array("type" => "error", "error" => '401', "message" => $e->getMessage());
-
-				$rs->getBody()->write(json_encode($temp));
-
-				return $rs;
+				return $resp;
 
 			}
 
-			$secret = 'lbs';
+		$auth=base64_decode( explode( " ", $req->getHeader('Authorization')[0]) [1] );
+		list($user, $pass) = explode(':', $auth);
 
-			$token = JWT::encode( [ 'iss'=>'http://api.lbs.local/auth',
-				'aud'=>'http://api.lbs.local',
-				'iat'=>time(), 
-				'exp'=>time()+3600,
-				'uid' =>  $carte->id], 
-				$secret, 'HS512' );
+		try {
+			$carte = \lbs\common\models\Carte::select('id', 'nom', 'password')
+				->where('id', '=', $args['id'])
+				->where('nom', '=', $user)
+				->firstOrFail();
 
-			$resp= $resp->withStatus(201);
+			if(!password_verify($pass, $carte->password)) {
+				throw new \Exception("Authentification incorrecte");
 
-			$rs->getBody()->write(json_encode($token));
+			unset($carte->password);
 
-			return $rs;
+			}
+
+		} catch(\Exception $e){
+			$resp = $resp->withHeader('WWW-authenticate','Basic realm="lbs api"');
+    		return Writer::json_error($resp, 401, 'carte ou nom de client non reconnu');
 		}
+
+		$secret = 'lbs';
+
+		$token = JWT::encode( [
+			'iat'=>time(), 
+			'exp'=>time()+3600,
+			'uid' =>  $carte->id], 
+			$secret, 'HS512' );
+
+		$resp= $resp->withStatus(201);
+
+		$resp->getBody()->write(json_encode($token));
+
+		return $resp;
 	}
+
+	public function getCarte(Request $req, Response $resp, array $args){
+		$id=$args['id'];
+
+      	$carte = Carte::select("id", "nom", "nbcommande", "montant")
+      			->where("id", "=", $id)
+      			->firstOrFail();
+
+	    $json =writer::jsonFormatRessource("carte",$carte,$links);
+
+	    $resp=$resp->withHeader('Content-Type','application/json');
+	    $resp->getBody()->write($json);
+	      
+	    return $resp;
+	}
+}

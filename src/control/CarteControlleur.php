@@ -30,8 +30,6 @@
       list($user, $pass)=explode(':', $authstring);
 
 
-    
-
       //  
 
       try{
