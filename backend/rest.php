@@ -6,11 +6,7 @@
 
   /* Appel des contrôleurs */
 
-  use \lbs\control\CategorieControlleur as Categorie;
-  use \lbs\control\SandwichControlleur as Sandwich;
-  use \lbs\control\TailleControlleur as Taille;
-  use \lbs\control\CommandeControlleur as Commande;
-  use \lbs\control\CarteControlleur as Carte;
+  use \lbs\control\backend\SandwichControlleur as Sandwich;
 
   /* Appel des modèles */
 
@@ -63,45 +59,6 @@
     return $next($rq, $rs);
   };
 
-  //Categorie
-
-  $app->get('/categories[/]',
-    function(Request $req, Response $resp, $args){
-      $ctrl=new Categorie($this);
-      return $ctrl->getCatalogue($req,$resp,$args);
-    }
-  )->setName("categories");
-
-  $app->get('/categories/{id}',
-    function(Request $req, Response $resp, $args){
-      $ctrl=new Categorie($this);
-      return $ctrl->getCatalogueId($req,$resp,$args);
-    }
-  )->setName("categoriesID");
-
-  $app->put('/categories/{id}',
-  		function(Request $req, Response $resp, $args){
-  			$ctrl=new Categorie($this);
-  			return $ctrl->updateCategorieId($req,$resp,$args);
-  		}
-  )->setName("categoriesUpdateID");
-
-  $app->post('/categories[/]',
-    function(Request $req, Response $resp, $args){
-      $ctrl=new Categorie($this);
-      return $ctrl->createCategorie($req,$resp,$args);
-    }
-  )->setName('createCategorie');
-
-  $app->get('/categories/{id}/sandwichsCategorie',
-      function(Request $req, Response $resp, $args){
-        $ctrl=new Categorie($this);
-        return $ctrl->getSandwichsByCategorie($req,$resp,$args);
-      }
-  )->setName('sandwichsByCategorie');
-
-  //Sandwichs
-
   $app->get('/sandwichs[/]',
     function(Request $req, Response $resp, $args){
       $ctrl=new Sandwich($this);
@@ -109,83 +66,26 @@
     }
   )->setName('sandwichsListe');
 
-  $app->get('/sandwichs/{id}',
+  $app->delete('/sandwichs/{id}',
     function(Request $req, Response $resp, $args){
       $ctrl=new Sandwich($this);
-      return $ctrl->getSandwichsId($req,$resp,$args);
+      return $ctrl->deleteSandwich($req,$resp,$args);
     }
-  )->setName('sandwichsLink');
+  )->setName('sandwichDelete');
 
-  $app->get('/sandwichs/{id}/tailles',
+  $app->post('/sandwichs[/]',
     function(Request $req, Response $resp, $args){
       $ctrl=new Sandwich($this);
-      return $ctrl->getTailleBySandwich($req, $resp, $args);
+      return $ctrl->ajouterSandwich($req,$resp,$args);
     }
-  )->setName('taillesBySandwich');
+  )->setName('sandwichAjouter');
 
-  $app->get('/sandwichs/{id}/categories',
+  $app->put('/sandwichs/{id}',
     function(Request $req, Response $resp, $args){
       $ctrl=new Sandwich($this);
-      return $ctrl->getCategoriesBySandwich($req,$resp,$args);
+      return $ctrl->modifierSandwich($req,$resp,$args);
     }
-  )->setName('categoriesBySandwich');
-
-  //Tailles
-
-  $app->get('/tailles/{id}',
-    function(Request $req, Response $resp, $args){
-      $ctrl=new Taille($this);
-      return $ctrl->getTailleId($req,$resp,$args);
-    }
-  )->setName("tailleID");
-
-  $app->get('/tailles[/]',
-    function(Request $req, Response $resp, $args){
-      $ctrl=new Taille($this);
-      return $ctrl->getTailles($req,$resp,$args);
-    }
-  )->setName("taille");
-
-  //Commande
-
-  $app->get('/commandes/{id}',
-  		function(Request $req, Response $resp, $args){
-  			$ctrl=new Commande($this);
-  			return $ctrl->getCommande($resp,$args);
-  		}
-  )->setName('commandeToken')->add('checkToken');
-
-  $app->post('/commandes[/]',
-  		function(Request $req, Response $resp, $args){
-  			$ctrl=new Commande($this);
-  			return $ctrl->createCommande($req,$resp,$args);
-  		}
-  )->setName('createCommande');
-
-  //Item
-
-  $app->post('/commandes/{id}/sandwichs[/]',
-  		function(Request $req, Response $resp, $args){
-  			$ctrl=new Commande($this);
-  			return $ctrl->createItem($resp,$args);
-  		}
-  )->setName('createCommande');
-
-  //Carte de fidélité
-
-  $app->get('/carte/{id}/auth[/]',
-  		function(Request $req, Response $resp, $args){
-  			$ctrl=new Carte($this);
-  			return $ctrl->authentification($req,$resp,$args);
-  		}
-  )->setName('authentification'); //Avec token JWT
-
-  $app->get('/carte/{id}',
-      function(Request $req, Response $resp, $args){
-        $ctrl=new Carte($this);
-        return $ctrl->getCarte($req,$resp,$args);
-      }
-  )->setName('getCarte');
+  )->setName('sandwichModifier');
 
 
   $app->run();

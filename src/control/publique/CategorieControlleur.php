@@ -27,17 +27,17 @@
     * Return Response $resp contenant la page complète
     */
     public function getCatalogue(Request $req, Response $resp, array $args){
-      $size = $req->getQueryParam('size',10);
-      $page = $req->getQueryParam('page',1);
+      $size=$req->getQueryParam('size',10);
+      $page=$req->getQueryParam('page',1);
 
       $categories=categorie::select("*");
       $categoriesTotal=$categories->get();
-      $total = sizeof($categoriesTotal);
+      $total=sizeof($categoriesTotal);
       $returnPag=pagination::page($categories,$size,$page,$total);
       $categories=$returnPag["request"]->get();
 
-      $tab = writer::addLink($categories, 'categories', 'categoriesID');
-      $json = writer::jsonFormatCollection("categories",$tab,$total,$size,$returnPag["page"]);
+      $tab=writer::addLink($categories, 'categories', 'categoriesID');
+      $json=writer::jsonFormatCollection("categories",$tab,$total,$size,$returnPag["page"]);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
@@ -52,10 +52,10 @@
     public function getCatalogueId(Request $req, Response $resp, array $args){
       $id=$args['id'];
 
-      $categorie = categorie::find($id);
+      $categorie=categorie::find($id);
 
-      $links["sandwichs"] = writer::addLinks("sandwichsByCategorie",$id);
-      $json =writer::jsonFormatRessource("categorie",$categorie,$links);
+      $links["sandwichs"]=writer::addLinks("sandwichsByCategorie",$id);
+      $json=writer::jsonFormatRessource("categorie",$categorie,$links);
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
@@ -70,7 +70,7 @@
     */
     public function createCategorie(Request $req, Response $resp, array $args){
       $postVar=$req->getParsedBody();
-      $categorie = new categorie();
+      $categorie=new categorie();
       $categorie->nom=filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
       $categorie->description=filter_var($postVar['description'],FILTER_SANITIZE_STRING);
       $categorie->save();
@@ -91,11 +91,11 @@
 
     	$postVar=$req->getParsedBody();
 
-    	$categorie = categorie::find($id);
+    	$categorie=categorie::find($id);
     	if($categorie){
     		if (!is_null($postVar['nom']) && !is_null($postVar['description'])){
-		    	$categorie->nom = filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
-		    	$categorie->description= filter_var($postVar['description'],FILTER_SANITIZE_STRING);
+		    	$categorie->nom=filter_var($postVar['nom'],FILTER_SANITIZE_STRING);
+		    	$categorie->description=filter_var($postVar['description'],FILTER_SANITIZE_STRING);
 		    	$categorie->save();
 
 		    	$resp=$resp->withHeader('Content-Type','application/json')
@@ -121,31 +121,24 @@
      * Return Response $resp contenant la page complète
      */
     public function getSandwichsByCategorie(Request $req, Response $resp, array $args){
-    	$idCateg=$args['id'];
-    	$resp=$resp->withHeader('Content-Type','application/json');
+      $id=$args['id'];
+      $item=categorie::find($id);
+      if($item){
+        $belongsToMany=$item->sandwichs()->select('id','nom','type_pain')->get();
+        if(isset($belongsToMany[0])){
+          $tab=writer::addLink($belongsToMany, 'sandwichs', 'sandwichsLink');
+          $json=writer::jsonFormatCollection("sandwichs",$tab);
 
-    	try{
-    		$categorie = categorie::findOrFail($idCateg);
-	    } catch (ModelNotFoundException $ex) {
-	    	$resp=$resp->withStatus(404);
-	    	$resp->getBody()->write(json_encode('Not found'));
-
-	    	return $resp;
-
-	    	//return Writer::json_error($resp, code:404, message:'ressource non disponible :'. $this->c->get('router')->pathFor('sandwich', ['id'=>$args['id']]));
-	    }
-
-	    if($categorie != null){
-
-	    	$listeSandwichs = $categorie->sandwichs()
-	    					                    ->select('id','nom','type_pain')
-	    					                    ->get();
-
-	    	$listeSandwichs = $this->addLink($listeSandwichs, 'sandwichs', 'sandwichsLink');
-        $tabRendu["type"]="collection";
-        $tabRendu["sandwichs"]=$listeSandwichs;
-	    	$resp->getBody()->write(json_encode($tabRendu));
-	    }
-    	return $resp;
+          $resp=$resp->withHeader('Content-Type','application/json');
+          $resp->getBody()->write($json);
+        }else{
+          $resp=$resp->withStatus(404);
+          $resp->getBody()->write('No Content');
+        }
+      }else{
+        $resp=$resp->withStatus(404);
+    		$resp->getBody()->write('not found');
+      }
+      return $resp;
     }
   }

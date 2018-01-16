@@ -116,11 +116,10 @@
       $belongsToMany=$item->categories;
 
       $tab = writer::addLink($belongsToMany, 'categories', 'categoriesID');
-        $json = writer::jsonFormatCollection("categories",$tab);
+      $json = writer::jsonFormatCollection("categories",$tab);
 
-        $resp=$resp->withHeader('Content-Type','application/json');
-        $resp->getBody()->write($json);
-
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $resp->getBody()->write($json);
 
       return $resp;
     }
