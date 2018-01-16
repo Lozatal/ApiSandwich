@@ -31,7 +31,7 @@
       $sandwichs=[];
       foreach($categories as $categorie){
         $sandwich=$categorie->sandwichs()->select('id','nom','type_pain')->get();
-        $sandwichs[$categorie['id']]=$sandwich;
+        $sandwichs[$categorie['nom']]=$sandwich;
       }
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write(json_encode($sandwichs));
