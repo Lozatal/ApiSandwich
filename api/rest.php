@@ -2,15 +2,18 @@
   require_once __DIR__ . '/../src/vendor/autoload.php';
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
+  use \DavidePastore\Slim\Validation\Validation as Validation;
+  use \Respect\Validation\Validator as Validator;
   use illuminate\database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 
   /* Appel des contrôleurs */
 
-  use \lbs\control\CategorieControlleur as Categorie;
-  use \lbs\control\SandwichControlleur as Sandwich;
-  use \lbs\control\TailleControlleur as Taille;
-  use \lbs\control\CommandeControlleur as Commande;
-  use \lbs\control\AuthController as Auth;
+
+  use \lbs\control\publique\CategorieControlleur as Categorie;
+  use \lbs\control\publique\SandwichControlleur as Sandwich;
+  use \lbs\control\publique\TailleControlleur as Taille;
+  use \lbs\control\publique\CommandeControlleur as Commande;
+  use \lbs\control\publique\AuthController as Carte;
 
   /* Appel des modèles */
 
@@ -62,6 +65,14 @@
     };
     return $next($rq, $rs);
   };
+  
+  function afficheError(Response $resp, $location, $errors){
+  	$resp=$resp->withHeader('Content-Type','application/json')
+  	->withStatus(400)
+  	->withHeader('Location', $location);
+  	$resp->getBody()->write(json_encode($errors));
+  	return $resp;
+  }
 
   //Categorie
 
@@ -154,13 +165,29 @@
   			return $ctrl->getCommande($resp,$args);
   		}
   )->setName('commandeToken')->add('checkToken');
+  
+  $validators= [
+  		'nom' => Validator::StringType()->alpha(),
+  		'prenom' => Validator::optional(Validator::StringType()->alpha()),
+  		'mail' => Validator::email(),
+  		'livraison' => [
+  			'date' => Validator::date('d-m-Y'),
+  			'heure' => Validator::date('H:i')
+  		],
+
+  ];
 
   $app->post('/commandes[/]',
   		function(Request $req, Response $resp, $args){
-  			$ctrl=new Commande($this);
-  			return $ctrl->createCommande($req,$resp,$args);
+  			if($req->getAttribute('has_errors')){
+  				$errors = $req->getAttribute('errors');
+  				return afficheError($resp, '/commandes/nouvelle', $errors);
+  			}else{
+	  			$ctrl=new Commande($this);
+	  			return $ctrl->createCommande($req,$resp,$args);
+  			}
   		}
-  )->setName('createCommande');
+  )->setName('createCommande')->add(new Validation($validators));
 
   //Item
 
@@ -175,7 +202,7 @@
 
   $app->get('/carte/{id}/auth[/]',
   		function(Request $req, Response $resp, $args){
-  			$ctrl=new Auth($this);
+  			$ctrl=new Carte($this);
   			return $ctrl->authenticate($req,$resp,$args);
   		}
   )->setName('authenticate'); //Avec token JWT
