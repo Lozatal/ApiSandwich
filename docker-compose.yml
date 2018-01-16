@@ -17,6 +17,9 @@ networks:
     driver: bridge
 
 services:
+#############################
+# Application publique
+#############################
   api.public:
     image: canals/php
     container_name: apiSandwich.lbs.local
@@ -37,7 +40,7 @@ services:
       - mysql:db
 
 #############################
-# mysql + adminer / can be replaced by mariadb
+# Base de donnée
 #############################
   mysql:
     image: mariadb:latest
@@ -63,4 +66,3 @@ services:
       - lbs_network
      links:
        - mysql:db
-
