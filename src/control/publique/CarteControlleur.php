@@ -1,6 +1,6 @@
 <?php
 
-  namespace lbs\control;
+  namespace lbs\control\publique;
 
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
@@ -30,9 +30,9 @@
       list($user, $pass)=explode(':', $authstring);
 
 
-    
 
-      //  
+
+      //
 
       try{
         $carte = Carte::select('id', 'nom' 'password')
@@ -65,5 +65,5 @@
   }
 
   public function getCarte(Request $req, Response $resp, array $args){
-    
+
   }

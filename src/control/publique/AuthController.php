@@ -1,6 +1,6 @@
 <?php
 
-	namespace lbs\api\control;
+	namespace lbs\api\control\publique;
 
 	use Firebase\JWT\JWT;
 
@@ -59,9 +59,9 @@
 
 			$token = JWT::encode( [ 'iss'=>'http://api.lbs.local/auth',
 				'aud'=>'http://api.lbs.local',
-				'iat'=>time(), 
+				'iat'=>time(),
 				'exp'=>time()+3600,
-				'uid' =>  $carte->id], 
+				'uid' =>  $carte->id],
 				$secret, 'HS512' );
 
 			$resp= $resp->withStatus(201);

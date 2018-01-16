@@ -6,11 +6,11 @@
 
   /* Appel des contrôleurs */
 
-  use \lbs\control\publique\CategorieControlleur as Categorie;
-  use \lbs\control\publique\SandwichControlleur as Sandwich;
-  use \lbs\control\publique\TailleControlleur as Taille;
-  use \lbs\control\publique\CommandeControlleur as Commande;
-  use \lbs\control\publique\CarteControlleur as Carte;
+  use \lbs\control\CategorieControlleur as Categorie;
+  use \lbs\control\SandwichControlleur as Sandwich;
+  use \lbs\control\TailleControlleur as Taille;
+  use \lbs\control\CommandeControlleur as Commande;
+  use \lbs\control\CarteControlleur as Carte;
 
   /* Appel des modèles */
 

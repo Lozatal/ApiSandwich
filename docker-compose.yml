@@ -40,6 +40,50 @@ services:
       - mysql:db
 
 #############################
+# Application privée
+#############################
+  api.private:
+    image: canals/php
+    container_name: private.lbs.local
+    environment:
+      - VHOST_HOSTNAME=private.lbs.local
+      - VHOST_DOCROOT=/var/www/private
+#     - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+#     - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+    ports:
+      - "10081:80"
+      - "10444:443"
+    volumes :
+      - ./private:/var/www/private
+      - ./src:/var/www/src
+    networks:
+      - lbs_network
+    links :
+      - mysql:db
+
+#############################
+# Application Backend
+#############################
+  api.backend:
+    image: canals/php
+    container_name: backend.lbs.local
+    environment:
+      - VHOST_HOSTNAME=backend.lbs.local
+      - VHOST_DOCROOT=/var/www/backend
+#     - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+#     - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+    ports:
+      - "10082:80"
+      - "10445:443"
+    volumes :
+      - ./backend:/var/www/backend
+      - ./src:/var/www/src
+    networks:
+      - lbs_network
+    links :
+      - mysql:db
+
+#############################
 # Base de donnée
 #############################
   mysql:

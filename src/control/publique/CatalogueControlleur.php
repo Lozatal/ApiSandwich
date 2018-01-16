@@ -1,6 +1,6 @@
 <?php
 
-  namespace lbs\control;
+  namespace lbs\control\publique;
 
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
@@ -343,7 +343,7 @@
     	$resp->getBody()->write('created');
     	return $resp;
     }
-    
+
     /*
      * Retourne la commande
      * @param : array $args[], Response $resp

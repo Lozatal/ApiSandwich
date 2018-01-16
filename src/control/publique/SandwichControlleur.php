@@ -1,6 +1,6 @@
 <?php
 
-  namespace lbs\control;
+  namespace lbs\control\publique;
 
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
@@ -62,7 +62,7 @@
     public function getSandwichsId(Request $req, Response $resp, array $args){
         $id=$args['id'];
         $resp=$resp->withHeader('Content-Type','application/json');
-        
+
         $sandwich = sandwich::find($id);
         if($sandwich==null){//Si id introuvable
           $json["erreur"]="Id trouvable";
@@ -79,7 +79,7 @@
           $resp=$resp->withHeader('Content-Type','application/json');
           $resp->getBody()->write($json);
         }
-        
+
         return $resp;
     }
 
@@ -121,7 +121,7 @@
         $resp=$resp->withHeader('Content-Type','application/json');
         $resp->getBody()->write($json);
 
-      
+
       return $resp;
     }
   }

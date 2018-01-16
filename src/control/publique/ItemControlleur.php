@@ -1,6 +1,6 @@
 <?php
 
-  namespace lbs\control;
+  namespace lbs\control\publique;
 
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
@@ -21,7 +21,7 @@
      */
     public function createItem(Request $req, Response $resp, array $args){
     	$token=$args['token'];
-    	
+
     	if($token != null){
     		$commande = commande::where('token', '=', $token)->firstOrFail();
     		if($commande != null){
@@ -30,13 +30,13 @@
 		    	$item->comm_id=filter_var($postVar['comm_id'],FILTER_SANITIZE_STRING);
 		    	$item->tai_id=filter_var($postVar['tai_id'],FILTER_SANITIZE_STRING);
 		    	$item->sand_id=filter_var($postVar['sand_id'],FILTER_SANITIZE_STRING);
-		    	
+
 		    	if($postVar['quantite'] != null){
 		    		$item->quantite=filter_var($postVar['quantite'],FILTER_SANITIZE_STRING);
 		    	}else{
 		    		$item->quantite=1;
 		    	}
-		    	
+
 		    	$item->save();
 		    	$resp=$resp->withHeader('Content-Type','application/json')
 		    	->withStatus(201)

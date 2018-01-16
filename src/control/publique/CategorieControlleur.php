@@ -1,6 +1,6 @@
 <?php
 
-  namespace lbs\control;
+  namespace lbs\control\publique;
 
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
@@ -59,7 +59,7 @@
 
       $resp=$resp->withHeader('Content-Type','application/json');
       $resp->getBody()->write($json);
-      
+
       return $resp;
     }
 
