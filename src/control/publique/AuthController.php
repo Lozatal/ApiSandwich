@@ -1,4 +1,5 @@
 <?php
+
 namespace lbs\control\publique;
 
 use Firebase\JWT\JWT;
@@ -17,48 +18,56 @@ class AuthController {
       $this->conteneur=$conteneur;
     }
 
+    //Normalement fonctionne mais doit ajouter quelques vérif supplémentaires....ca peut toujours être utile
+
 	public function authenticate(Request $req,Response $resp,array $args) {
 
   		if(!$req->hasHeader('Authorization')) {
 
-				$resp = $resp->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
-				$resp= $resp->withStatus(401);
-				$temp = array("type" => "error", "error" => '401', "message" => "No Authorization in header");
+			$resp = $resp->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
+			$resp= $resp->withStatus(401);
+			$temp = array("type" => "error", "error" => '401', "message" => "No Authorization in header");
 
-				$resp->getBody()->write(json_encode($temp));
+			$resp->getBody()->write(json_encode($temp));
 
-				return $resp;
+			return $resp;
 
-			}
+		}
 
 		$auth=base64_decode( explode( " ", $req->getHeader('Authorization')[0]) [1] );
 		list($user, $pass) = explode(':', $auth);
 
-		try {
-			$carte = \lbs\common\models\Carte::select('id', 'nom', 'password')
-				->where('id', '=', $args['id'])
-				->where('nom', '=', $user)
-				->firstOrFail();
+		$carte = Carte::select('id', 'nom', 'password', 'mail')
+						->where('id', '=', $args['id'])
+						->firstOrFail();
 
-			if(!password_verify($pass, $carte->password)) {
-				throw new \Exception("Authentification incorrecte");
 
-			unset($carte->password);
+		if($carte->password != $pass) {
+			$resp = $resp->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
+			$resp= $resp->withStatus(403);
+			$temp = array("type" => "error", "error" => '403', "message" => "Nom d'utilisateur ou mot de passe incorrecte");
 
-			}
+			$resp->getBody()->write(json_encode($temp));
 
-		} catch(\Exception $e){
-			$resp = $resp->withHeader('WWW-authenticate','Basic realm="lbs api"');
-    		return Writer::json_error($resp, 401, 'carte ou nom de client non reconnu');
+			return $resp;
 		}
+		else{
+			$resp = $resp->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
+			$resp= $resp->withStatus(200);
+			$temp = array("type" => "OK", "CODE" => '200', "message" => "Connexion reussi");
 
+			$resp->getBody()->write(json_encode($temp));
+
+			return $resp;
+		}
+		
 		$secret = 'lbs';
 
 		$token = JWT::encode( [
-			'iat'=>time(), 
-			'exp'=>time()+3600,
-			'uid' =>  $carte->id], 
-			$secret, 'HS512' );
+					'iat'=>time(), 
+					'exp'=>time()+3600,
+					'uid' =>  $carte->id], 
+					$secret, 'HS512' );
 
 		$resp= $resp->withStatus(201);
 
@@ -69,6 +78,15 @@ class AuthController {
 	public function getCarte(Request $req, Response $resp, array $args){
 		$id=$args['id'];
 
+		//Pour le token
+		$secret = 'lbs';
+
+		$token = JWT::encode( [
+			'iat'=>time(), 
+			'exp'=>time()+3600,
+			'uid' =>  $carte->id], 
+			$secret, 'HS512' );
+
       	$carte = Carte::select("id", "nom", "nbcommande", "montant")
       			->where("id", "=", $id)
       			->firstOrFail();
@@ -76,6 +94,8 @@ class AuthController {
 	    $json =writer::jsonFormatRessource("carte",$carte,$links);
 
 	    $resp=$resp->withHeader('Content-Type','application/json');
+	    $resp= $resp->withStatus(201);
+	    //$resp->getBody()->write(json_encode($token));
 	    $resp->getBody()->write($json);
 	      
 	    return $resp;

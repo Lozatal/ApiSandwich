@@ -209,7 +209,7 @@
 
   $app->get('/carte/{id}',
       function(Request $req, Response $resp, $args){
-        $ctrl=new Auth($this);
+        $ctrl=new Carte($this);
         return $ctrl->getCarte($req,$resp,$args);
       }
   )->setName('getCarte');
