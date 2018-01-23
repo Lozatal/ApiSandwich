@@ -14,7 +14,8 @@
   use \lbs\control\publique\TailleControlleur as Taille;
   use \lbs\control\publique\CommandeControlleur as Commande;
   use \lbs\control\publique\CarteControlleur as Carte;
-
+  use \lbs\control\publique\ItemControlleur as Item;
+  
   /* Appel des modèles */
 
   use \lbs\model\Commande as ModelCommande;
@@ -190,13 +191,24 @@
   )->setName('createCommande')->add(new Validation($validators));
 
   //Item
+  
+  $validators= [
+  		'tai_id' => Validator::numeric(),
+  		'sand_id' => Validator::numeric(),
+  		'quantite' => Validator::optional(Validator::numeric())
+  ];
 
   $app->post('/commandes/{id}/sandwichs[/]',
   		function(Request $req, Response $resp, $args){
-  			$ctrl=new Commande($this);
-  			return $ctrl->createItem($resp,$args);
+  			if($req->getAttribute('has_errors')){
+  				$errors = $req->getAttribute('errors');
+  				return afficheError($resp, '/items/nouvelle', $errors);
+  			}else{
+  				$ctrl=new Item($this);
+  				return $ctrl->createItem($req,$resp,$args);
+  			}
   		}
-  )->setName('createCommande');
+  )->setName('createItem')->add(new Validation($validators))->add('checkToken');;
 
   //Carte de fidélité
 
