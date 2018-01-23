@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8"/>
+  <title>API Sandwich - Backend</title>
+  <link rel="stylesheet" href="design.css" type="text/css">
+</head>
+
+<body>
+    <header>
+      <h1>Backend</h1>
+    </header>
+    <article>
+      <form method="post" action="{{ ajouter }}">
+        <fieldset><legend>Informations générales</legend>
+          <input type="text" placeholder="nom du sandwich" name="nom">
+          <input type="text" placeholder="description" name="description">
+          <input type="hidden" value="baguette" name="type_pain">
+        </fieldset>
+        <fieldset><legend>Catégories associées</legend>
+        {% for categorie in tab %}
+        <input type="checkbox" value="{{ categorie.nom }}">{{ categorie.nom }}</option>
+        {% endfor %}
+        </fieldset>
+        <fieldset><legend>Prix par taille</legend>
+
+        </fieldset>
+        <input type="submit" value="Ajouter un sandwich">
+      </form>
+    </article>
+    <article>
+      {% for categorie in tab %}
+            <div class="categorie">
+              <h2>{{ categorie.nom }}</h2>
+              {% for sandwich in categorie.sandwichs %}
+                <div class="sandwich">
+                  <h3>{{ sandwich.nom }}</h3>
+                  <a href="{{ sandwich.modifier }}">Modifier</a>
+                  <form method="delete" action="{{ sandwich.supprimer }}"><input type="submit" value="Supprimer"></form>
+                </div>
+              {% endfor %}
+            </div>
+      {% endfor %}
+    </article>
+
+    <footer>
+      <p>Fin de la page</p>
+    </footer>
+</body>
+
+</html>

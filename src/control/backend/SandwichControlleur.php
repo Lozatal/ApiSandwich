@@ -27,15 +27,32 @@
     * Return Response $resp contenant la page complète
     */
     public function getSandwichs(Request $req,Response $resp,array $args){
+
+      /* Creation tableau de categorie avec sandwichs */
       $categories=categorie::select("*")->get();
       $sandwichs=[];
+      $i=0;
       foreach($categories as $categorie){
         $sandwich=$categorie->sandwichs()->select('id','nom','type_pain')->get();
-        $sandwichs[$categorie['nom']]=$sandwich;
+
+        $tab[$i]['nom']=$categorie['nom'];
+        $tab[$i]['sandwichs']=$sandwich;
+        foreach($tab[$i]['sandwichs'] as $sand){
+          $sand['modifier']=$this->conteneur->get('router')->pathFor('sandwichModifier',['id'=>$sand['id']]);
+          $sand['supprimer']=$this->conteneur->get('router')->pathFor('sandwichDelete',['id'=>$sand['id']]);
+        }
+        $i++;
       }
-      $resp=$resp->withHeader('Content-Type','application/json');
-      $resp->getBody()->write(json_encode($sandwichs));
-      return $resp;
+
+      /* Récupération liste des tailles_Sandwichs */
+
+      $tailles=taille::get();
+
+      /* Lien pour ajouter un sandwich */
+
+      $ajouter=$this->conteneur->get('router')->pathFor('sandwichAjouter');
+
+      return $this->conteneur->view->render($resp,'SandwichBackend.twig',['tab'=>$tab,'ajouter'=>$ajouter,'tailles'=>$tailles]);
     }
 
     /*
@@ -73,10 +90,10 @@
       $sandwich->description=filter_var($postVar['description'],FILTER_SANITIZE_STRING);
       $sandwich->type_pain=filter_var($postVar['type_pain'],FILTER_SANITIZE_STRING);
       $sandwich->save();
-      $resp=$resp->withHeader('Content-Type','application/json')
-                 ->withStatus(201)
-                 ->withHeader('Location', '/sandwich/nouvelle');
-      $resp->getBody()->write('created');
+
+      $redirect=$this->conteneur->get('router')->pathFor('sandwichsListe');
+      $resp=$resp->withStatus(301)->withHeader('Location', $redirect);
+
       return $resp;
     }
 

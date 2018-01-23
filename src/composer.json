@@ -6,7 +6,8 @@
 		"ramsey/uuid": "^3.7",
 		"firebase/php-jwt": "^5.0",
 		"davidepastore/slim-validation": "^0.5.0",
-		"twig/twig": "2.0"
+		"twig/twig": "2.0",
+		"slim/twig-view": "^2.0"
 	},
 
 	"autoload":{
