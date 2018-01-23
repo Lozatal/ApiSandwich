@@ -8,7 +8,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 use lbs\utils\Writer as Writer;
 
-use lbs\model\Commande as commande;
+use lbs\model\Commande as Commande;
 use lbs\model\Carte as Carte;
 
 class CarteControlleur {
@@ -78,35 +78,26 @@ class CarteControlleur {
   public function getCarte(Request $req, Response $resp, array $args){
     $id=$args['id'];
 
-    /*Pour le token
-    $secret = 'lbs';
-
-    $token = JWT::encode( [
-      'iat'=>time(), 
-      'exp'=>time()+3600,
-      'uid' =>  $carte->id], 
-      $secret, 'HS512' );*/
-
-    $carte = Carte::select("id", "nom", "nbcommande", "montant")
+    /*$carte = Carte::select("id", "nom", "nbcommande", "montant")
         ->where("id", "=", $id)
-        ->first();
+        ->first();*/
 
-    $resp=$resp->withHeader('Content-Type','application/json');
-    $resp->getBody()->write(json_encode($carte));
+    $carte = Carte::findOrFail($id);
+
+    $authorization_header = $req->getHeader('Authorization')[0];
+    $tokenstring = sscanf($authorization_header, 'Bearer %s')[0];
+    $decoded_token = JWT::decode($tokenstring, 'lbs', array('HS512'));
+
+    if($carte->id != $decoded_token->uid){
+      $resp = $resp->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
+      $resp= $resp->withStatus(401);
+      $temp = array("type" => "error", "error" => 401, "message" => "echec auth");
+    }
+    else{
+      $resp=$resp->withHeader('Content-Type','application/json');
+      $resp->getBody()->write(json_encode($carte));
       
-    return $resp;
-  }
-
-  public function payerCommande (Request $req, Response $resp, array $args) {
-    $id=$args['id'];
-
-    $carte = Carte::find($id);
-
-    
-
-    $resp=$resp->withHeader('Content-Type','application/json');
-    $resp->getBody()->write(json_encode());
-      
-    return $resp;
+      return $resp;
+    }
   }
 }

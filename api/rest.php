@@ -214,13 +214,6 @@
       }
   )->setName('getCarte');
 
-  $app->post('/carte/{id}/payer[/]',
-      function(Request $req, Response $resp, $args){
-        $ctrl=new Carte($this);
-        return $ctrl->payerCommande($req,$resp,$args);
-      }
-  )->setName('payerCommande');
-
 
   $app->run();
 ?>
