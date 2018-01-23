@@ -8,7 +8,7 @@
   use lbs\model\Commande as commande;
   use illuminate\database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 
-  class TailleControlleur{
+  class ItemControlleur{
     public $conteneur=null;
     public function __construct($conteneur){
       $this->conteneur=$conteneur;
@@ -20,14 +20,14 @@
      * Return Response $resp contenant l'item complet
      */
     public function createItem(Request $req, Response $resp, array $args){
-    	$token=$args['token'];
-
-    	if($token != null){
-    		$commande = commande::where('token', '=', $token)->firstOrFail();
+    	$id=$args['id'];
+		
+    	if($id != null){
+    		$commande = commande::where('id', '=', $id)->firstOrFail();
     		if($commande != null){
 		    	$postVar=$req->getParsedBody();
-		    	$item = new item();
-		    	$item->comm_id=filter_var($postVar['comm_id'],FILTER_SANITIZE_STRING);
+		    $item = new item();
+		    	$item->comm_id=$id;
 		    	$item->tai_id=filter_var($postVar['tai_id'],FILTER_SANITIZE_STRING);
 		    	$item->sand_id=filter_var($postVar['sand_id'],FILTER_SANITIZE_STRING);
 
@@ -41,7 +41,7 @@
 		    	$resp=$resp->withHeader('Content-Type','application/json')
 		    	->withStatus(201)
 		    	->withHeader('Location', '/items/nouvelle');
-		    	$resp->getBody()->write('created');
+		    	$resp->getBody()->write(json_encode($item));
     		}
     	}
     	else{
