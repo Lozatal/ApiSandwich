@@ -13,7 +13,7 @@
   use \lbs\control\publique\SandwichControlleur as Sandwich;
   use \lbs\control\publique\TailleControlleur as Taille;
   use \lbs\control\publique\CommandeControlleur as Commande;
-  use \lbs\control\publique\AuthController as Carte;
+  use \lbs\control\publique\CarteControlleur as Carte;
 
   /* Appel des modèles */
 
@@ -207,12 +207,19 @@
   		}
   )->setName('authenticate'); //Avec token JWT
 
-  $app->get('/carte/{id}',
+  $app->get('/carte/{id}[/]',
       function(Request $req, Response $resp, $args){
         $ctrl=new Carte($this);
         return $ctrl->getCarte($req,$resp,$args);
       }
   )->setName('getCarte');
+
+  $app->post('/carte/{id}/payer[/]',
+      function(Request $req, Response $resp, $args){
+        $ctrl=new Carte($this);
+        return $ctrl->payerCommande($req,$resp,$args);
+      }
+  )->setName('payerCommande');
 
 
   $app->run();
