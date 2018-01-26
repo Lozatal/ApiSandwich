@@ -51,7 +51,7 @@
 			    	$item->save();
 			    	
 			    	//On modifie le tarif global de la commande
-			    	if($commande->prix = null){
+			    	if(is_null($commande->prix)){
 			    		$commande->prix = 0;
 			    	}
 			    	
