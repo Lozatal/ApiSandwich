@@ -191,13 +191,24 @@
   )->setName('createCommande')->add(new Validation($validators));
 
   //Item
+  
+  $validators= [
+  		'tai_id' => Validator::numeric(),
+  		'sand_id' => Validator::numeric(),
+  		'quantite' => Validator::optional(Validator::numeric())
+  ];
 
   $app->post('/commandes/{id}/sandwichs[/]',
   		function(Request $req, Response $resp, $args){
-  			$ctrl=new Item($this);
-  			return $ctrl->createItem($req,$resp,$args);
+  			if($req->getAttribute('has_errors')){
+  				$errors = $req->getAttribute('errors');
+  				return afficheError($resp, '/items/nouvelle', $errors);
+  			}else{
+  				$ctrl=new Item($this);
+  				return $ctrl->createItem($req,$resp,$args);
+  			}
   		}
-  )->setName('createItem')->add('checkToken');;
+  )->setName('createItem')->add(new Validation($validators))->add('checkToken');;
 
   //Carte de fidélité
 
