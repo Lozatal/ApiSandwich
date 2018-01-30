@@ -82,7 +82,32 @@
      * @param : array $args[], Response $resp
      * Return Response $resp contenant la page complète
      */
-    public function getCommande(Response $resp, array $args){
+    public function deleteItem(Response $resp, array $args){
+    	$id=$args['id'];
+    	$item_id=$args['id_sand'];
     	
+    	//on vérifie que la commande éxiste
+    	$commande = commande::where('id', '=', $id)->first();
+    	if($commande != null){
+    		try{
+    			// on vérifie que l'item éxiste toujours
+    			$item = item::where('id', '=', $item_id)->firstOrFail();
+    			try{
+    				$item->delete();
+    				$queries = DB::getQueryLog();
+    				$resp=$resp->withStatus(204);
+    				$resp->getBody()->write($queries);
+    			}catch(ModelNotFoundException $ex){
+    				$resp=$resp->withStatus(403);
+    				$resp->getBody()->write($ex);
+    			}
+    		}catch(ModelNotFoundException $ex){
+    			$resp=$resp->withStatus(404);
+    			$resp->getBody()->write('item not found');
+    		}
+    	}else{
+    		$resp=$resp->withStatus(404);
+    		$resp->getBody()->write('command not found');
+    	}
     }
   }

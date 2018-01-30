@@ -226,6 +226,14 @@
   			}
   		}
   )->setName('createItem')->add(new Validation($validators))->add('checkToken');;
+  
+  $app->delete('/commandes/{id}/sandwichs/{id_sand}[/]',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Item($this);
+  			return $ctrl->deleteItem($resp,$args);
+  		}
+  		)->setName('deleteItem')->add('checkToken');
+  		
 
   //Carte de fidélité
 
@@ -249,7 +257,6 @@
         return $ctrl->payerCommande($req,$resp,$args);
       }
   )->setName('payerCommande');
-
-
+  
   $app->run();
 ?>
