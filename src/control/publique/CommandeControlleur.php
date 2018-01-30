@@ -28,9 +28,8 @@
     	$commande->prenom=filter_var($postVar['prenom'],FILTER_SANITIZE_STRING);
     	$commande->mail=filter_var($postVar['mail'],FILTER_SANITIZE_STRING);
     	$commande->livraison= \DateTime::createFromFormat('d-m-Y H:i',$postVar['livraison']['date'].' '.$postVar['livraison']['heure']);
-    	//$commande->livraison= new Datetime();
     	$commande->token=bin2hex(random_bytes(32));
-    	$commande->etat=1; // created
+    	$commande->etat=0; // created
 
     	$commande->save();
 
@@ -43,6 +42,49 @@
     	->withHeader('Location', '/commandes/nouvelle');
     	$resp->getBody()->write(json_encode($commandeFormate));
     	return $resp;
+    }
+    
+    /*
+     * Mettre à jour la date de livraison via une requête PUT
+     * @param : Request $req, Response $resp, array $args[]
+     * Return Response $resp contenant la page complète
+     */
+    public function updateCommande(Request $req, Response $resp, array $args){
+    	$id=$args['id'];
+    	$postVar=$req->getParsedBody();
+    	
+    	if($id != null){
+    		try{
+    			$commande = commande::where('id', '=', $id)->firstOrFail();
+    			
+    			if($commande->etat = 2){ // payée et livrée
+    				$resp=$resp->withStatus(403);
+    				$resp->getBody()->write('La commande a déja été livrée');
+    			}else{
+    				$date = filter_var($postVar['date'],FILTER_SANITIZE_STRING);
+    				$heure = filter_var($postVar['heure'],FILTER_SANITIZE_STRING);
+    				$commande->livraison= \DateTime::createFromFormat('d-m-Y H:i',$date.' '.$heure);
+    				$commande->save();
+    				
+    				//$commande->livraison = $commande->livraison->date;
+    				$commande->livraison = $postVar['date'].' '.$postVar['heure'];
+    				$commandeFormate = $this->returnCommandeFormate($commande);
+    				
+    				$resp=$resp->withHeader('Content-Type','application/json')
+    				->withStatus(201)
+    				->withHeader('Location', '/commandes/update');
+    				$resp->getBody()->write(json_encode($commandeFormate));
+    			}
+    		}catch(ModelNotFoundException $ex){
+    			$resp=$resp->withStatus(404);
+    			$resp->getBody()->write('not found');
+    		}
+    	}else{
+    		$resp=$resp->withStatus(404);
+    		$resp->getBody()->write('not found');
+    	}
+    	return $resp;
+    	
     }
 
     /*

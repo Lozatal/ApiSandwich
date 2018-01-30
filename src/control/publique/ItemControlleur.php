@@ -76,4 +76,13 @@
     	}
     	return $resp;
     }
+    
+    /*
+     * Supprime le sandwich d'une commande
+     * @param : array $args[], Response $resp
+     * Return Response $resp contenant la page complète
+     */
+    public function getCommande(Response $resp, array $args){
+    	
+    }
   }

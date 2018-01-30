@@ -189,6 +189,23 @@
   			}
   		}
   )->setName('createCommande')->add(new Validation($validators));
+  
+  $validators= [
+  		'date' => Validator::date('d-m-Y'),
+  		'heure' => Validator::date('H:i')
+  ];
+  
+  $app->put('/commandes/{id}[/]',
+  		function(Request $req, Response $resp, $args){
+  			if($req->getAttribute('has_errors')){
+  				$errors = $req->getAttribute('errors');
+  				return afficheError($resp, '/commandes/update', $errors);
+  			}else{
+  				$ctrl=new Commande($this);
+  				return $ctrl->updateCommande($req,$resp,$args);
+  			}
+  		}
+  		)->setName('updateCommande')->add(new Validation($validators))->add('checkToken');
 
   //Item
   
