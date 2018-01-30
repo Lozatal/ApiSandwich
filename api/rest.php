@@ -212,7 +212,7 @@
 
   //Carte de fidélité
 
-  $app->get('/carte/{id}/auth[/]',
+  $app->post('/carte/{id}/auth[/]',
   		function(Request $req, Response $resp, $args){
   			$ctrl=new Carte($this);
   			return $ctrl->authenticate($req,$resp,$args);
@@ -225,6 +225,20 @@
         return $ctrl->getCarte($req,$resp,$args);
       }
   )->setName('getCarte');
+
+  $app->post('/carte/{id}/commande/{id_commande}',
+      function(Request $req, Response $resp, $args){
+        $ctrl=new Carte($this);
+        return $ctrl->payerCommande($req,$resp,$args);
+      }
+  )->setName('payerCommande');
+
+  $app->post('/newcarte[/]',
+      function(Request $req, Response $resp, $args){
+        $ctrl=new Carte($this);
+        return $ctrl->createCarte($req,$resp,$args);
+      }
+  )->setName('createCarte');
 
 
   $app->run();
