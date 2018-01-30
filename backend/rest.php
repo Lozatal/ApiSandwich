@@ -4,6 +4,12 @@
   use \Psr\Http\Message\ResponseInterface as Response;
   use illuminate\database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 
+  /* Appel et configuration de twig */
+  $loader = new Twig_Loader_Filesystem('../src/view/backend');
+  $twig = new Twig_Environment($loader, array(
+      'cache' => false
+  ));
+
   /* Appel des contrôleurs */
 
   use \lbs\control\backend\SandwichControlleur as Sandwich;
@@ -27,8 +33,15 @@
   $configuration=[
     'settings'=>[
       'displayErrorDetails'=>true,
-      'production' => false
-    ]
+      'production' => false,
+      'tmpl_dir' => __DIR__ . '/../src/view/backend'
+    ],
+    'view'=>function($c){
+      return new \Slim\Views\Twig(
+        $c['settings']['tmpl_dir'],
+        ['debug'=>true]
+      );
+    }
   ];
 
   $errors = require_once __DIR__ . '/../src/config/api_errors.php';

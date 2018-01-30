@@ -2,7 +2,11 @@
 
 namespace lbs\control\publique;
 
-use Firebase\JWT\JWT;
+use Firebase\JWT\JWT as JWT;
+use Firebase\JWT\ExpiredException;
+use Firebase\JWT\SignatureInvalidException ;
+use Firebase\JWT\BeforeValidException;
+
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
@@ -22,7 +26,7 @@ class CarteControlleur {
 
   public function authenticate(Request $req,Response $resp,array $args) {
 
-      if(!$req->hasHeader('Authorization')) {
+    if(!$req->hasHeader('Authorization')) {
 
       $resp = $resp->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
       $resp= $resp->withStatus(401);
@@ -40,7 +44,6 @@ class CarteControlleur {
     $carte = Carte::select('id', 'nom', 'password', 'mail')
             ->where('id', '=', $args['id'])
             ->firstOrFail();
-
 
     if($carte->password != $pass) {
       $resp = $resp->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
@@ -66,7 +69,7 @@ class CarteControlleur {
     $token = JWT::encode( [
           'iat'=>time(), 
           'exp'=>time()+3600,
-          'uid' =>  $carte->id], 
+          'uid' => $carte->id], 
           $secret, 'HS512' );
 
     $resp= $resp->withStatus(201);
@@ -77,27 +80,53 @@ class CarteControlleur {
 
   public function getCarte(Request $req, Response $resp, array $args){
     $id=$args['id'];
+    $secret='lbs';
 
-    /*$carte = Carte::select("id", "nom", "nbcommande", "montant")
-        ->where("id", "=", $id)
-        ->first();*/
+    try {
+      $carte = Carte::findOrFail($id);
 
-    $carte = Carte::findOrFail($id);
+      $header= $req->getHeader('Authorization')[0];
+      $tokenstring= sscanf($header, "Bearer %s")[0];
+      $token= JWT::decode($tokenstring, $secret, ['HS512']);
 
-    $authorization_header = $req->getHeader('Authorization')[0];
-    $tokenstring = sscanf($authorization_header, 'Bearer %s')[0];
-    $decoded_token = JWT::decode($tokenstring, 'lbs', array('HS512'));
-
-    if($carte->id != $decoded_token->uid){
-      $resp = $resp->withHeader('WWW-authenticate', 'Basic realm="lbs api" ');
-      $resp= $resp->withStatus(401);
-      $temp = array("type" => "error", "error" => 401, "message" => "echec auth");
+      if($carte->id != $token->uid){
+        return $resp->withJson(array(
+          'type' => 'Error',
+          'error' => 401,
+          'message' => "echec auth"
+        ), 401);
+      }
+      else{
+       return $resp->withJson([
+          "id" => $carte->id,
+          "nom"=>$carte->nom,
+          "nbcommande"=>$carte->nbcommande,
+          "montant"=>$carte->montant,
+          "created_at"=>$carte->created_at,
+          "validate_at"=>$carte->validate_at
+        ]); 
+      }
     }
-    else{
-      $resp=$resp->withHeader('Content-Type','application/json');
-      $resp->getBody()->write(json_encode($carte));
-      
-      return $resp;
-    }
+    catch (ExpiredException $e) { 
+      return $resp->withJson(array(
+          'type' => 'Error',
+          'error' => 401,
+          'message' => "JWT token expiré"
+        ), 401);
+    } 
+    catch (SignatureInvalidException $e) { 
+      return $resp->withJson(array(
+          'type' => 'Error',
+          'error' => 401,
+          'message' => "signature du token non valide"
+        ), 401);
+    } 
+    catch (BeforeValidException $e) { 
+      return $resp->withJson(array(
+          'type' => 'Error',
+          'error' => 401,
+          'message' => "token plus valide"
+        ), 401);
+    } 
   }
 }
