@@ -15,8 +15,4 @@ class Taille extends \Illuminate\Database\Eloquent\Model {
                                 'sand_id')
                 ->withPivot("prix");
   }
-  /*
-  public function tarifs(){
-  	return $this->hasMany( 'lbs\model\Tarif', 'taille_id');
-  }*/
 }

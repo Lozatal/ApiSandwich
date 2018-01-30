@@ -20,8 +20,8 @@ class Sandwich extends \Illuminate\Database\Eloquent\Model {
     return $this->belongsToMany( 'lbs\model\Taille',
                                 'tarif',
                                 'sand_id',
-                                'taille_id');
-                //->withPivot('tarif');
+                                'taille_id')
+                ->withPivot("prix");
   }
 
   public function images(){
@@ -31,7 +31,7 @@ class Sandwich extends \Illuminate\Database\Eloquent\Model {
   public function tarifs(){
   	return $this->hasMany( 'lbs\model\tarif', 'sand_id');
   }*/
-  
+
   public function commandes(){
   	return $this->belongsToMany( 'lbs\model\Commande',
 					  			'item',
