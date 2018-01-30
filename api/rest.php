@@ -234,6 +234,24 @@
   		}
   		)->setName('deleteItem')->add('checkToken');
   		
+  $validators= [
+  		'tai_id' => Validator::numeric(),
+  		'sand_id' => Validator::numeric(),
+  		'quantite' => Validator::optional(Validator::numeric())
+  ];
+  		
+  $app->put('/commandes/{id}/sandwichs/{id_sand}[/]',
+  		function(Request $req, Response $resp, $args){
+  			if($req->getAttribute('has_errors')){
+  				$errors = $req->getAttribute('errors');
+  				return afficheError($resp, '/items/update', $errors);
+  			}else{
+  				$ctrl=new Item($this);
+  				return $ctrl->updateItem($req,$resp,$args);
+  			}
+  		}
+  )->setName('updateItem')->add(new Validation($validators))->add('checkToken');
+  				
 
   //Carte de fidélité
 
