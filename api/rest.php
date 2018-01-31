@@ -206,6 +206,13 @@
   			}
   		}
   		)->setName('updateCommande')->add(new Validation($validators))->add('checkToken');
+  		
+  	$app->get('/commandes/{id}/facture[/]',
+  		function(Request $req, Response $resp, $args){
+  			$ctrl=new Commande($this);
+  			return $ctrl->getFactureCommande($resp,$args);
+  		}
+  	)->setName('factureCommande')->add('checkToken');
 
   //Item
   
