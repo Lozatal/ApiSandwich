@@ -4,7 +4,6 @@
 <head>
   <meta charset="utf-8"/>
   <title>API Sandwich - Backend</title>
-  <link rel="stylesheet" href="design.css" type="text/css">
 </head>
 
 <body>
@@ -50,5 +49,67 @@
       <p>Fin de la page</p>
     </footer>
 </body>
+<style>
+body{
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+header{
+  width: 100%;
+}
+header h1{
+  text-align: center;
+  width: 100%;
+}
 
+article:nth-child(2){
+  width: 70%;
+  margin: auto;
+}
+article:nth-child(3){
+  width: 90%;
+  margin: auto;
+}
+
+.categorie{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.categorie h2{
+  width: 100%;
+}
+
+.sandwich{
+  width: 11.25%;
+  margin-left: 2%;
+  box-sizing: border-box;
+  background-color: #AEDDEE;
+  text-align: center;
+  border-radius: 0px 20px 0px 0px;
+  -webkit-transition-property: border-radius;
+  -webkit-transition-duration: 1s;
+  -moz-transition-property: border-radius;
+  -moz-transition-duration: 1s;
+  transition-property: border-radius;
+  transition-duration: 1s;
+}
+
+.sandwich:hover{
+  border-radius: 40px 40px 40px 40px;
+}
+
+footer{
+  width: 80%;
+  border: 1px solid black;
+  margin: auto;
+  margin-top: 2em;
+}
+
+footer p{
+  text-align: center;
+  width: 100%;
+}
+</style>
 </html>
