@@ -4,45 +4,36 @@
 <head>
   <meta charset="utf-8"/>
   <title>API Sandwich - Backend</title>
+  <link rel="stylesheet" href="design.css" type="text/css">
 </head>
 
 <body>
     <header>
-      <h1>Backend</h1>
+      <h1>Backend Modification d'un Sandwich</h1>
     </header>
     <article>
-      <form method="post" action="{{ ajouter }}">
+      <form method="post" action="{{ modifier }}">
         <fieldset><legend>Informations générales</legend>
-          <input type="text" placeholder="nom du sandwich" name="nom">
-          <input type="text" placeholder="description" name="description">
-          <input type="hidden" value="baguette" name="type_pain">
+          <input type="text" placeholder="nom du sandwich" name="nom" value="{{ sandwich.nom }}">
+          <input type="text" placeholder="description" name="description" value="{{ sandwich.description }}">
+          <input type="hidden" value="baguette" name="type_pain" value="{{ sandwich.type_pain }}">
         </fieldset>
         <fieldset><legend>Catégories associées</legend>
-          {% for categorie in tab %}
-          <input type="checkbox" value="{{ categorie.id }}" name="{{ categorie.nom }}">{{ categorie.nom }}
+          {% for categorie in categories %}
+            {% if categorie.nom in sand_cat %}
+              <input type="checkbox" value="{{ categorie.id }}" name="{{ categorie.nom }}" checked>{{ categorie.nom }}
+            {% else %}
+              <input type="checkbox" value="{{ categorie.id }}" name="{{ categorie.nom }}">{{ categorie.nom }}
+            {% endif %}
           {% endfor %}
         </fieldset>
         <fieldset><legend>Prix par taille</legend>
           {% for taille in tailles %}
-          <label for="{{ taille.id }}">{{ taille.nom }}</label><input type="text" name="{{ taille.id }}" placeholder="valeur en €">
+            <label for="{{ taille.id }}">{{ taille.nom }}</label><input type="text" name="{{ taille.id }}" placeholder="valeur en €" value="{{ taille.prix }}">
           {% endfor %}
         </fieldset>
-        <input type="submit" value="Ajouter un sandwich">
+        <input type="submit" value="Modifier un sandwich">
       </form>
-    </article>
-    <article>
-      {% for categorie in tab %}
-            <div class="categorie">
-              <h2>{{ categorie.nom }}</h2>
-              {% for sandwich in categorie.sandwichs %}
-                <div class="sandwich">
-                  <h3>{{ sandwich.nom }}</h3>
-                  <a href="{{ sandwich.modifier }}">Modifier</a>
-                  <form method="POST" action="{{ sandwich.supprimer }}"><input type="submit" value="Supprimer"></form>
-                </div>
-              {% endfor %}
-            </div>
-      {% endfor %}
     </article>
 
     <footer>

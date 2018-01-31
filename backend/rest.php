@@ -79,7 +79,7 @@
     }
   )->setName('sandwichsListe');
 
-  $app->delete('/sandwichs/{id}',
+  $app->post('/sandwichs/delete/{id}',
     function(Request $req, Response $resp, $args){
       $ctrl=new Sandwich($this);
       return $ctrl->deleteSandwich($req,$resp,$args);
@@ -93,12 +93,19 @@
     }
   )->setName('sandwichAjouter');
 
-  $app->put('/sandwichs/{id}',
+  $app->post('/sandwichs/modifier/{id}',
     function(Request $req, Response $resp, $args){
       $ctrl=new Sandwich($this);
-      return $ctrl->modifierSandwich($req,$resp,$args);
+      return $ctrl->modifierSandwichPost($req,$resp,$args);
     }
-  )->setName('sandwichModifier');
+  )->setName('sandwichModifierPost');
+
+  $app->get('/sandwichs/modifier/{id}',
+    function(Request $req, Response $resp, $args){
+      $ctrl=new Sandwich($this);
+      return $ctrl->modifierSandwichGet($req,$resp,$args);
+    }
+  )->setName('sandwichModifierGet');
 
 
   $app->run();
