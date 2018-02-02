@@ -96,7 +96,7 @@
     				$item->delete();
 
     				$resp=$resp->withStatus(204);
-    				$resp->getBody()->write($queries);
+    				$resp->getBody()->write('no content');
     			}catch(ModelNotFoundException $ex){
     				$resp=$resp->withStatus(403);
     				$resp->getBody()->write($ex);
