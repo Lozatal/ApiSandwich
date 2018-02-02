@@ -118,13 +118,8 @@
     	$commande = commande::where('id', '=', $id)->firstOrFail();
     	$items = $commande->items()->get();
     	
+        //Sert à l'affichage
     	$itemsFormate = [];
-
-            //$itemsFormate[] = $items[0];
-
-        //$toto = $items[0]=>sandwich();
-
-        
     	foreach($items as $item){
             $sand = sandwich::where('id', '=', $item->sand_id)->first();
             $taille = taille::where('id', '=', $item->tai_id)->first();
@@ -139,7 +134,7 @@
             
     	}
         
-    	
+    	//on modifie le format de la date pour l'affichage
     	$dateTime = null;
     	$date = '';
     	$heure = '';
@@ -164,6 +159,43 @@
     	
     	$resp->getBody()->write(json_encode($facture));
     	return $resp;
+    }
+
+    /*
+     * Créée via une requête POST le payement d'une commande
+     * @param : Request $req, Response $resp, array $args[]
+     * Return Response $resp contenant la page complète
+     */
+    public function payerCommande(Request $req, Response $resp, array $args){
+        $id=$args['id'];
+        $postVar=$req->getParsedBody();
+
+        try{
+            $commande = commande::where('id', '=', $id)->firstOrFail();
+            if($commande != null){
+                $numero_carte = filter_var($postVar['numero_carte'],FILTER_SANITIZE_STRING);
+                $nom_complet_proprietaire = filter_var($postVar['nom_complet_proprietaire'],FILTER_SANITIZE_STRING);
+                $date_validite = \DateTime::createFromFormat('d-m-Y H:i',$postVar['date_validite']);
+                $code_carte = filter_var($postVar['code_carte'],FILTER_SANITIZE_STRING);
+
+                //traitement fictif pour vérifier que la carte est valide auprès de la banque..
+
+                //traitement en cours...please wait...
+
+                //traitement réussie ! yeah !
+                $commande->etat = 1; // payée
+                $commande->save();
+
+                $resp=$resp->withHeader('Content-Type','application/json')
+                ->withStatus(201)
+                ->withHeader('Location', '/commandes/payement');
+                $resp->getBody()->write(json_encode('Payement éffectué.'));
+            }
+        }catch(ModelNotFoundException $ex){
+            $resp=$resp->withStatus(404);
+            $resp->getBody()->write('not found');
+        }
+        return $resp;
     }
 
     /*

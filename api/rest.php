@@ -214,6 +214,25 @@
   		}
   	)->setName('factureCommande')->add('checkToken');
 
+  $validators= [
+      'numero_carte' => Validator::alnum(),
+      'nom_complet_proprietaire' => Validator::StringType()->alpha(),
+      'date_validite' => Validator::date('d-m-Y'),
+      'code_carte' => Validator::StringType()->numeric()
+  ];
+
+  $app->post('/commandes/{id}/payement[/]',
+      function(Request $req, Response $resp, $args){
+        if($req->getAttribute('has_errors')){
+          $errors = $req->getAttribute('errors');
+          return afficheError($resp, '/commandes/nouvelle', $errors);
+        }else{
+          $ctrl=new Commande($this);
+          return $ctrl->payerCommande($req,$resp,$args);
+        }
+      }
+  )->setName('payerCommande')->add(new Validation($validators))->add('checkToken');
+
   //Item
   
   $validators= [
