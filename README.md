@@ -2,6 +2,10 @@
 
 /sql/bdd.sql ==> contient le fichier sql permettant de créer la base de données, les tables et quelques données.
 
+Pour consulter la documentation de l'API : 
+Récupérer ce fichier : /doc/swagger.json
+Faire un import de swagger.json depuis l'adresse suivante : http://editor.swagger.io/
+
 ## Routes
 
 ### Catégories
