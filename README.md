@@ -1,4 +1,6 @@
-# API - Le Bon Sandwich
+﻿# API - Le Bon Sandwich
+
+/sql/bdd.sql ==> contient le fichier sql permettant de créer la base de données, les tables et quelques données.
 
 ## Routes
 
