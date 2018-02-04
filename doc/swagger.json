@@ -1,0 +1,1177 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "LeBonSandwich est un vendeur de sandwich à la carte bien connu sur la place locale, caractérisé par le type et la qualité des produits proposés, issus de producteur locaux et en majorité avec le label \"Bio\". Pour garantir la qualité et la fraicheur de ses produits, tous les sandwichs sont réalisés au moment de la commande, ce qui peut conduire à des temps d attente parfois un peu long. Pour améliorer cela, la boutique souhaite se doter d'un service de commande en ligne de sandwichs.",
+    "version": "1.0.0",
+    "title": "API Sandwich"
+  },
+  "tags": [
+    {
+      "name": "categories",
+      "description": "Les différentes catégories de sandwichs"
+    },
+    {
+      "name": "sandwichs",
+      "description": "L'ensemble des sandwichs"
+    },
+    {
+      "name": "tailles",
+      "description": "Les différentes tailles des sandwichs"
+    },
+    {
+      "name": "commande",
+      "description": "La partie commande de sandwich de l'API"
+    },
+    {
+      "name": "carte",
+      "description": "La carte de fidélité"
+    }
+  ],
+  "paths": {
+    "/categories": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Obtenir la liste des catégories de sandwich",
+        "description": "Fonction getCatalogue.",
+        "parameters": [
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Categories"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Créer une nouvelle catégorie",
+        "description": "Fonction createCategorie.",
+        "parameters": [
+          {
+            "name": "nom",
+            "in": "query",
+            "description": "Le nom de la nouvelle catégorie",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "La description de la nouvelle catégorie",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/categories/{id}/": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Obtenir la description d'une catégorie",
+        "description": "Fonction getCatalogueId.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau des arguments prend l'ID de la catégorie",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Categories"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Obtenir la description d'une catégorie",
+        "description": "Fonction updateCategorieId.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la categorie a modifier",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/categories/{id}/sandwichsCategorie/": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Obtenir la liste des sandwichs d'une catégorie",
+        "description": "Fonction getSandwichsByCategorie.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau des arguments prend l'ID de la catégorie",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Sandwichs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/sandwichs/": {
+      "get": {
+        "tags": [
+          "sandwichs"
+        ],
+        "summary": "Obtenir la liste de tout les sandwichs",
+        "description": "Fonction getSandwichs.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Sandwichs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "sandwichs"
+        ],
+        "summary": "Ajouter un sandwich dans la liste, en indiquant sa catégorie – gérer le token csrf – gérer les tailles et prix",
+        "description": "Fonction ajouterSandwich.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sandwichs/{id}/": {
+      "get": {
+        "tags": [
+          "sandwichs"
+        ],
+        "summary": "Obtenir la description d'un sandwich détaillé avec les tailles, prix categorie du sandwich sous forme imbriqué",
+        "description": "Fonction getSandwichsId qui va utilisé la fonction \"pagination\" ainsi que \"addLinks\" pour afficher la catégorie du sandwich sous forme de lien.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau des arguments prend l'ID du sandwich",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SandwichsLinks"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sandwichs/{id}/tailles/": {
+      "get": {
+        "tags": [
+          "sandwichs"
+        ],
+        "summary": "Obtenir les tailles disponnibles pour un sandwich",
+        "description": "Fonction getTailleBySandwich",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du sandwich",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/TaillesSandwichs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sandwichs/{id}/categorie/": {
+      "get": {
+        "tags": [
+          "sandwichs"
+        ],
+        "summary": "Obtenir les catégories disponnibles pour un sandwich",
+        "description": "Fonction getCategoriesBySandwich",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du sandwich",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Categories"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sandwichs/{type}/{img}/": {
+      "get": {
+        "tags": [
+          "sandwichs"
+        ],
+        "summary": "Obtenir la liste des sandwich avec filtrage sur le type de pain et l'image",
+        "description": "Fonction getSandwichs qui gère donc le filtre ainsi que la varible total qui récupère le total.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "Le type de pain voulu",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "img",
+            "in": "path",
+            "description": "L'image voulu",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Categories"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sandwichs/{page}/{size}": {
+      "get": {
+        "tags": [
+          "sandwichs"
+        ],
+        "summary": "Obtenir la liste des sandwichs avec pagination.",
+        "description": "Fonction getSandwichs qui gère donc la pagination ainsi que la fonction pagination.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "size",
+            "in": "path",
+            "description": "le nombre d'elements voulu par page",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "description": "le nombre de page nécessaire pour afficher tous les résultats",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sandwichs/delete/{id}": {
+      "delete": {
+        "tags": [
+          "sandwichs"
+        ],
+        "summary": "Supprimer un sandwich dans la liste",
+        "description": "Fonction deleteSandwich",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du sandwich à supprimer",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/sandwichs/modifier/{id}": {
+      "put": {
+        "tags": [
+          "sandwichs"
+        ],
+        "summary": "Modifier un sandwich de la liste",
+        "description": "Fonction updateSandwich",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du sandwich à modifier",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/tailles": {
+      "get": {
+        "tags": [
+          "tailles"
+        ],
+        "summary": "Retourne les différentes tailles possible pour les sandwichs",
+        "description": "Fonction getTailles.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/TaillesSandwichs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/tailles/{id}": {
+      "get": {
+        "tags": [
+          "tailles"
+        ],
+        "summary": "Retourne la liste des sandwichs dans la taille donnée",
+        "description": "Fonction getTailleId",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la taille voulu",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/TaillesSandwichs"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/commande": {
+      "post": {
+        "tags": [
+          "commande"
+        ],
+        "summary": "Crée une commande vide contient la date de livraison et les coordonnées du client sont transmises – retourne 1 token d\"identification de la commande.",
+        "description": "Fonction createCommande.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "nom",
+            "in": "query",
+            "description": "le nom de l'utilisateur",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "prenom",
+            "in": "query",
+            "description": "le prénom de l'utilisateur",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "mail",
+            "in": "query",
+            "description": "le mail de l'utilisateur",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "livraison_date",
+            "in": "query",
+            "description": "date de livraison",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "livraison_heure",
+            "in": "query",
+            "description": "heure de livraison",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/commande/{id}/sandwichs": {
+      "post": {
+        "tags": [
+          "commande"
+        ],
+        "summary": "Ajouter un sandwich à une commande existante – en accord avec l'état de la commande – transmet les id de sandwich et taille et la quantité",
+        "description": "Fonction createItem.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "les différents id de sandwich à ajouter dans la commande",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "tailles",
+            "in": "query",
+            "description": "les tailles concernés pour les sandwich",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "quantité",
+            "in": "query",
+            "description": "la quantité voulu",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/commande/{id}": {
+      "put": {
+        "tags": [
+          "commande"
+        ],
+        "summary": "Modifier une commande existante par exemple date de livraison",
+        "description": "Fonction updateCommande.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau d'arguments qui prend un id de commande",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "404": {
+            "description": "Item Not Found || Commande Not Found || Pas de tarif valide"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "commande"
+        ],
+        "summary": "Obtenir la commande pour suivre son état",
+        "description": "Fonction getCommande.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau d'arguments qui prend un id de commande",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Commande"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/commandes/{id}/payement": {
+      "post": {
+        "tags": [
+          "commande"
+        ],
+        "summary": "Payer une commande en transmettant des coordonnées bancaires.",
+        "description": "Fonction payerCommande.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau d'arguments qui prend un id de commande",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "numero_carte",
+            "in": "query",
+            "description": "Le numéro de carte de l'utilisateur",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "nom_complet_proprietaire",
+            "in": "path",
+            "description": "Le nom complet de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "date_validite",
+            "in": "path",
+            "description": "La date de validité de la carte de l'utilisateur",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "code_carte",
+            "in": "path",
+            "description": "Le code de carte de l'utilisateur",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/commandes/{id}/sandwichs/{id_sand}/": {
+      "put": {
+        "tags": [
+          "commande"
+        ],
+        "summary": "Modifier un item d'une commande",
+        "description": "Fonction payerCommande.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau d'arguments qui prend un id de commande",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "id_sand",
+            "in": "path",
+            "description": "Le tableau d'arguments qui prend un id de sandwich qui sera modifié",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Commande déjà livrée"
+          },
+          "404": {
+            "description": "commande/item Not found || Le sandwich associé à cette taille n'a pas de tarif valide."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "commande"
+        ],
+        "summary": "Supprimer un item d'une commande",
+        "description": "Fonction deleteItem.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la commande",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "id_sand",
+            "in": "path",
+            "description": "ID du sandwich qui sera supprimer",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/commande/{id}/facture": {
+      "get": {
+        "tags": [
+          "commande"
+        ],
+        "summary": "Obtenir une facture pour une commande payée",
+        "description": "Fonction getFactureCommande.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau d'arguments qui prend un id de commande",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/carte/{id}/auth": {
+      "post": {
+        "tags": [
+          "carte"
+        ],
+        "summary": "Authentification  http basic, retourne un token jwt",
+        "description": "Fonction authenticate.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau d'arguments qui prend un id de carte",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/carte/{id}": {
+      "get": {
+        "tags": [
+          "carte"
+        ],
+        "summary": "Accéder à sa carte de fidélité montant + réduction",
+        "description": "Fonction getCarte En rajoutant un header Autorization.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Le tableau d'arguments qui prend un id de carte",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "Retour",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Carte"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/carte/{id}/commande/{id_commande}": {
+      "post": {
+        "tags": [
+          "carte"
+        ],
+        "summary": "Payer une commande avec sa carte de fidélité",
+        "description": "Fonction payerCommande.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "L'id de l carte",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "id_commande",
+            "in": "path",
+            "description": "L'id de la commande",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/newcarte": {
+      "post": {
+        "tags": [
+          "carte"
+        ],
+        "summary": "Créer sa carte de fidélité",
+        "description": "Fonction createCarte.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "nom",
+            "in": "query",
+            "description": "Le nom du propriétaire de la carte",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "le mot de passe de la carte",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "mail",
+            "in": "query",
+            "description": "Le mail du propriétaire",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Categories": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "Sandwichs": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type_pain": {
+          "type": "string"
+        },
+        "img": {
+          "type": "string"
+        }
+      }
+    },
+    "SandwichsLinks": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type_pain": {
+          "type": "string"
+        },
+        "img": {
+          "type": "string"
+        },
+        "categorie": {
+          "type": "string",
+          "properties": {
+            "id_categorie": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "desc_categorie": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "TaillesSandwichs": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "Commande": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "prenom": {
+          "type": "string"
+        },
+        "mail": {
+          "type": "string"
+        },
+        "livraison": {
+          "type": "string"
+        },
+        "etat": {
+          "type": "string"
+        },
+        "prix": {
+          "type": "integer"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "Carte": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "nbCommande": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "montant": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}
